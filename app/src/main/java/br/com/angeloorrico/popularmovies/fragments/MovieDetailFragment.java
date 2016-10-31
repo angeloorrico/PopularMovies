@@ -23,17 +23,17 @@ import br.com.angeloorrico.popularmovies.models.MovieModel;
 
 public class MovieDetailFragment extends Fragment {
 
-    MovieModel movie;
+    MovieModel mMovie;
 
-    RelativeLayout movieDetailContainer;
-    LinearLayout noDataContainer;
-    TextView tvError, tvOverview, tvTitle, tvReleaseDate, tvVoteAverage;
-    ImageView ivMovie;
+    RelativeLayout mMovieDetailContainer;
+    LinearLayout mNoDataContainer;
+    TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
+    ImageView mIvMovie;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        movie = (MovieModel) getActivity().getIntent()
+        mMovie = (MovieModel) getActivity().getIntent()
                 .getSerializableExtra(getString(R.string.movie_extra));
     }
 
@@ -43,19 +43,19 @@ public class MovieDetailFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_movie_detail, container, false);
 
-        movieDetailContainer = (RelativeLayout)rootView.findViewById(R.id.movie_detail_container);
-        ivMovie = (ImageView)rootView.findViewById(R.id.iv_movie);
-        noDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
-        tvOverview = (TextView)rootView.findViewById(R.id.tv_overview);
-        tvTitle = (TextView)rootView.findViewById(R.id.tv_title);
-        tvReleaseDate = (TextView)rootView.findViewById(R.id.tv_release_date);
-        tvVoteAverage = (TextView)rootView.findViewById(R.id.tv_vote_average);
-        tvError = (TextView)rootView.findViewById(R.id.tv_error);
+        mMovieDetailContainer = (RelativeLayout)rootView.findViewById(R.id.movie_detail_container);
+        mIvMovie = (ImageView)rootView.findViewById(R.id.iv_movie);
+        mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
+        mTvOverview = (TextView)rootView.findViewById(R.id.tv_overview);
+        mTvTitle = (TextView)rootView.findViewById(R.id.tv_title);
+        mTvReleaseDate = (TextView)rootView.findViewById(R.id.tv_release_date);
+        mTvVoteAverage = (TextView)rootView.findViewById(R.id.tv_vote_average);
+        mTvError = (TextView)rootView.findViewById(R.id.tv_error);
 
-        if (movie == null) {
-            tvError.setText(getString(R.string.msg_no_data));
-            noDataContainer.setVisibility(View.VISIBLE);
-            movieDetailContainer.setVisibility(View.GONE);
+        if (mMovie == null) {
+            mTvError.setText(getString(R.string.msg_no_data));
+            mNoDataContainer.setVisibility(View.VISIBLE);
+            mMovieDetailContainer.setVisibility(View.GONE);
         } else
             loadMovieDetails();
 
@@ -63,18 +63,18 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void loadMovieDetails() {
-        getActivity().setTitle(movie.getTitle());
+        getActivity().setTitle(mMovie.getTitle());
 
         Picasso.with(getActivity())
-                .load(BuildConfig.POSTER_BASE_URL + movie.getPosterPath())
+                .load(BuildConfig.POSTER_BASE_URL + mMovie.getPosterPath())
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
-                .into(ivMovie);
+                .into(mIvMovie);
 
-        tvTitle.setText(movie.getTitle());
-        tvReleaseDate.setText(movie.getReleaseDate());
-        tvOverview.setText(movie.getOverview());
-        tvVoteAverage.setText(String.format(getString(R.string.msg_vote_average), movie.getVoteAverage()));
+        mTvTitle.setText(mMovie.getTitle());
+        mTvReleaseDate.setText(mMovie.getReleaseDate());
+        mTvOverview.setText(mMovie.getOverview());
+        mTvVoteAverage.setText(String.format(getString(R.string.msg_vote_average), mMovie.getVoteAverage()));
     }
 
 }

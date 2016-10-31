@@ -22,4 +22,5 @@ public class Utils {
         return Locale.getDefault().toString().equalsIgnoreCase(
                 "pt_BR") ? "pt-BR" : Locale.getDefault().toString();
     }
+
 }

@@ -24,22 +24,22 @@ import br.com.angeloorrico.popularmovies.models.MovieModel;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
-    Context context;
-    List<MovieModel> moviesList;
+    Context mContext;
+    List<MovieModel> mMoviesList;
 
-    public MovieAdapter(Context context) {
-        this.context = context;
-        this.moviesList = new ArrayList<>();
+    public MovieAdapter(Context mContext) {
+        this.mContext = mContext;
+        this.mMoviesList = new ArrayList<>();
     }
 
     public void setMoviesList(List<MovieModel> moviesList) {
-        this.moviesList = moviesList;
+        this.mMoviesList = moviesList;
         notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(
+        View view = LayoutInflater.from(mContext).inflate(
                 R.layout.movie_item_view,
                 parent,
                 false);
@@ -48,36 +48,36 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Picasso.with(context)
-                .load(BuildConfig.POSTER_BASE_URL + moviesList.get(position).getPosterPath())
+        Picasso.with(mContext)
+                .load(BuildConfig.POSTER_BASE_URL + mMoviesList.get(position).getPosterPath())
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
-                .into(holder.imgMovie);
-        holder.imgMovie.setOnClickListener(new View.OnClickListener() {
+                .into(holder.mImgMovie);
+        holder.mImgMovie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, MovieDetailActivity.class);
-                intent.putExtra(context.getString(R.string.movie_extra), moviesList.get(position));
-                context.startActivity(intent);
+                Intent intent = new Intent(mContext, MovieDetailActivity.class);
+                intent.putExtra(mContext.getString(R.string.movie_extra), mMoviesList.get(position));
+                mContext.startActivity(intent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return mMoviesList.size();
     }
 
     public MovieModel getItem(int position) {
-        return moviesList.get(position);
+        return mMoviesList.get(position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imgMovie;
+        private ImageView mImgMovie;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.imgMovie = (ImageView) itemView;
+            this.mImgMovie = (ImageView) itemView;
         }
     }
 

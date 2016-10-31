@@ -35,14 +35,14 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     private final int SORT_BY_MOST_POPULAR  = 0;
     private final int SORT_BY_HIGHEST_RATED = 1;
 
-    LinearLayout noDataContainer;
-    TextView tvError;
-    RecyclerView rvMovies;
-    SwipeRefreshLayout swipeContainer;
+    LinearLayout mNoDataContainer;
+    TextView mTvError;
+    RecyclerView mRvMovies;
+    SwipeRefreshLayout mSwipeContainer;
 
-    MovieAdapter moviesAdapter;
+    MovieAdapter mMoviesAdapter;
 
-    RecyclerView.LayoutManager layoutManager;
+    RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,34 +55,34 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_movies_list, container, false);
 
-        noDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
-        tvError = (TextView)rootView.findViewById(R.id.tv_error);
-        rvMovies = (RecyclerView) rootView.findViewById(R.id.rv_movies);
-        swipeContainer = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
+        mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
+        mTvError = (TextView)rootView.findViewById(R.id.tv_error);
+        mRvMovies = (RecyclerView) rootView.findViewById(R.id.rv_movies);
+        mSwipeContainer = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchMoviesList();
             }
         });
 
-        rvMovies.setHasFixedSize(true);
-        rvMovies.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+        mRvMovies.setHasFixedSize(true);
+        mRvMovies.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
                         intent.putExtra(getActivity().getString(R.string.movie_extra),
-                                moviesAdapter.getItem(position));
+                                mMoviesAdapter.getItem(position));
                         startActivity(intent);
                     }
                 })
         );
-        layoutManager = new GridLayoutManager(getActivity(),
+        mLayoutManager = new GridLayoutManager(getActivity(),
                 getResources().getInteger(R.integer.gallery_columns));
-        rvMovies.setLayoutManager(layoutManager);
-        moviesAdapter = new MovieAdapter(getActivity());
-        rvMovies.setAdapter(moviesAdapter);
+        mRvMovies.setLayoutManager(mLayoutManager);
+        mMoviesAdapter = new MovieAdapter(getActivity());
+        mRvMovies.setAdapter(mMoviesAdapter);
 
         return rootView;
     }
@@ -118,19 +118,19 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     private void fetchMoviesList() {
         if (Utils.hasInternetConnection(getActivity())) {
-            rvMovies.setVisibility(View.VISIBLE);
-            noDataContainer.setVisibility(View.GONE);
-            swipeContainer.setRefreshing(true);
+            mRvMovies.setVisibility(View.VISIBLE);
+            mNoDataContainer.setVisibility(View.GONE);
+            mSwipeContainer.setRefreshing(true);
 
             MovieTask movieTask = new MovieTask();
             movieTask.setConnector(this);
             movieTask.execute(getSortByPreference() == SORT_BY_MOST_POPULAR ?
                     MovieTask.PARAM_MOST_POPULAR : MovieTask.PARAM_TOP_RATED);
         } else {
-            tvError.setText(getString(R.string.msg_no_internet_connection));
-            rvMovies.setVisibility(View.GONE);
-            noDataContainer.setVisibility(View.VISIBLE);
-            swipeContainer.setRefreshing(false);
+            mTvError.setText(getString(R.string.msg_no_internet_connection));
+            mRvMovies.setVisibility(View.GONE);
+            mNoDataContainer.setVisibility(View.VISIBLE);
+            mSwipeContainer.setRefreshing(false);
         }
     }
 
@@ -146,14 +146,15 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     @Override
     public void onConnectionResult(Object responseData) {
-        swipeContainer.setRefreshing(false);
+        mSwipeContainer.setRefreshing(false);
         if (responseData != null) {
             MovieResponseModel moviesList = (MovieResponseModel) responseData;
-            moviesAdapter.setMoviesList(moviesList.getResults());
+            mMoviesAdapter.setMoviesList(moviesList.getResults());
         } else {
-            tvError.setText(getString(R.string.msg_no_data));
-            rvMovies.setVisibility(View.GONE);
-            noDataContainer.setVisibility(View.VISIBLE);
+            mTvError.setText(getString(R.string.msg_no_data));
+            mRvMovies.setVisibility(View.GONE);
+            mNoDataContainer.setVisibility(View.VISIBLE);
         }
     }
+
 }

@@ -5,4 +5,4 @@
     android:name="br.com.angeloorrico.popularmovies.fragments.MovieDetailFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.angeloorrico.popularmovies.activities.MovieDetailActivity"/>
+    tools:mContext="br.com.angeloorrico.popularmovies.activities.MovieDetailActivity"/>

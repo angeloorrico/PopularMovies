@@ -29,23 +29,23 @@ public class MovieTask extends AsyncTask<String, Void, MovieResponseModel> {
     public static final String PARAM_MOST_POPULAR = "popular";
     public static final String PARAM_TOP_RATED    = "top_rated";
 
-    private ServicesEndpoints servicesEndpoints;
+    private ServicesEndpoints mServicesEndpoints;
 
-    private OkHttpClient okHttpClient;
+    private OkHttpClient mOkHttpClient;
 
-    private MoviesConnector connector;
+    private MoviesConnector mConnector;
 
     public void setConnector(MoviesConnector connector) {
-        this.connector = connector;
+        this.mConnector = connector;
     }
 
     public MoviesConnector getConnector() {
-        return connector;
+        return mConnector;
     }
 
     private OkHttpClient getOkHttpClient() {
-        if (okHttpClient != null)
-            return okHttpClient;
+        if (mOkHttpClient != null)
+            return mOkHttpClient;
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
         clientBuilder.addInterceptor(new Interceptor() {
@@ -61,8 +61,8 @@ public class MovieTask extends AsyncTask<String, Void, MovieResponseModel> {
         clientBuilder.addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY));
 
-        okHttpClient = clientBuilder.build();
-        return okHttpClient;
+        mOkHttpClient = clientBuilder.build();
+        return mOkHttpClient;
     }
 
     @Override
@@ -73,13 +73,13 @@ public class MovieTask extends AsyncTask<String, Void, MovieResponseModel> {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        servicesEndpoints = retrofit.create(ServicesEndpoints.class);
+        mServicesEndpoints = retrofit.create(ServicesEndpoints.class);
     }
 
     @Override
     protected MovieResponseModel doInBackground(String... params) {
         try {
-            return servicesEndpoints.fetchMoviesList(params[0],
+            return mServicesEndpoints.fetchMoviesList(params[0],
                     Utils.getDeviceLocale()).execute().body();
         } catch(Exception ex) {
             Log.e(LOG_TAG, ex.getMessage());
@@ -90,7 +90,7 @@ public class MovieTask extends AsyncTask<String, Void, MovieResponseModel> {
     @Override
     protected void onPostExecute(MovieResponseModel movieResponseModel) {
         super.onPostExecute(movieResponseModel);
-        connector.onConnectionResult(movieResponseModel);
+        mConnector.onConnectionResult(movieResponseModel);
     }
 
 }
