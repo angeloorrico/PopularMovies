@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <string name="mn_sort_by_most_popular">Most popular</string>
+    <string name="mn_sort_by_highest_rated">Highest rated</string>
+    <string name="mn_sort_by">Sort by</string>
+    <string name="msg_no_data">Sorry, no data could be found.</string>
+    <string name="msg_no_internet_connection">Sorry, your device is not connected to the Internet.</string>
+    <string name="sort_by_pref" translatable="false">SortBy</string>
+    <string name="movie_extra" translatable="false">MovieExtra</string>
+    <string name="msg_vote_average">%s/10</string>
+</resources>
