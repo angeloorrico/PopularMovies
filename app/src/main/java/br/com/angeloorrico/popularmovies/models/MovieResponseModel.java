@@ -1,6 +1,6 @@
 package br.com.angeloorrico.popularmovies.models;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Angelo on 25/10/2016.
@@ -8,13 +8,13 @@ import java.util.List;
 
 public class MovieResponseModel {
 
-    private List<MovieModel> results;
+    private ArrayList<MovieModel> results;
 
-    public List<MovieModel> getResults() {
+    public ArrayList<MovieModel> getResults() {
         return results;
     }
 
-    public void setResults(List<MovieModel> results) {
+    public void setResults(ArrayList<MovieModel> results) {
         this.results = results;
     }
 

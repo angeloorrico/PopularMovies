@@ -7,6 +7,7 @@
     <string name="msg_no_data">Sorry, no data could be found.</string>
     <string name="msg_no_internet_connection">Sorry, your device is not connected to the Internet.</string>
     <string name="sort_by_pref" translatable="false">SortBy</string>
+    <string name="movies_list_param" translatable="false">MoviesList</string>
     <string name="movie_extra" translatable="false">MovieExtra</string>
     <string name="msg_vote_average" translatable="false">%s/10</string>
 </resources>

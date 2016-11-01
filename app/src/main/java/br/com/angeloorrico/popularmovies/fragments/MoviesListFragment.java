@@ -17,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MovieDetailActivity;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
 import br.com.angeloorrico.popularmovies.adapters.RecyclerItemClickListener;
 import br.com.angeloorrico.popularmovies.connection.MovieTask;
 import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
+import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.models.MovieResponseModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
@@ -41,6 +44,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     SwipeRefreshLayout mSwipeContainer;
 
     MovieAdapter mMoviesAdapter;
+    ArrayList<MovieModel> mMoviesList;
 
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -48,6 +52,21 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(getString(R.string.movies_list_param), mMoviesList);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState == null)
+            fetchMoviesList();
+        else
+            onConnectionResult(savedInstanceState.get(getString(R.string.movies_list_param)));
     }
 
     @Override
@@ -110,12 +129,6 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         return true;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        fetchMoviesList();
-    }
-
     private void fetchMoviesList() {
         if (Utils.hasInternetConnection(getActivity())) {
             mRvMovies.setVisibility(View.VISIBLE);
@@ -148,8 +161,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public void onConnectionResult(Object responseData) {
         mSwipeContainer.setRefreshing(false);
         if (responseData != null) {
-            MovieResponseModel moviesList = (MovieResponseModel) responseData;
-            mMoviesAdapter.setMoviesList(moviesList.getResults());
+            mMoviesList = ((MovieResponseModel)responseData).getResults();
+            mMoviesAdapter.setMoviesList(mMoviesList);
+            mRvMovies.setVisibility(View.VISIBLE);
+            mNoDataContainer.setVisibility(View.GONE);
         } else {
             mTvError.setText(getString(R.string.msg_no_data));
             mRvMovies.setVisibility(View.GONE);
