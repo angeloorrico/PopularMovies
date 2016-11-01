@@ -1,7 +1,6 @@
 package br.com.angeloorrico.popularmovies.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
-import br.com.angeloorrico.popularmovies.activities.MovieDetailActivity;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 
 /**
@@ -53,14 +51,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(holder.mImgMovie);
-        holder.mImgMovie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, MovieDetailActivity.class);
-                intent.putExtra(mContext.getString(R.string.movie_extra), mMoviesList.get(position));
-                mContext.startActivity(intent);
-            }
-        });
     }
 
     @Override

@@ -17,15 +17,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MovieDetailActivity;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
 import br.com.angeloorrico.popularmovies.adapters.RecyclerItemClickListener;
 import br.com.angeloorrico.popularmovies.connection.MovieTask;
 import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
-import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.models.MovieResponseModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
@@ -44,7 +41,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     SwipeRefreshLayout mSwipeContainer;
 
     MovieAdapter mMoviesAdapter;
-    ArrayList<MovieModel> mMoviesList;
+    MovieResponseModel mMoviesList;
 
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -161,8 +158,8 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public void onConnectionResult(Object responseData) {
         mSwipeContainer.setRefreshing(false);
         if (responseData != null) {
-            mMoviesList = ((MovieResponseModel)responseData).getResults();
-            mMoviesAdapter.setMoviesList(mMoviesList);
+            mMoviesList = (MovieResponseModel) responseData;
+            mMoviesAdapter.setMoviesList(mMoviesList.getResults());
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
         } else {
