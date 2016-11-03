@@ -8,4 +8,9 @@ IMPORTANT: Please obtain an API Key from TMDB and place it within "API_KEY" in t
 
 The app is localized both in Brazilian Portuguese and English.
 
-Icon from Icon Finder (https://www.iconfinder.com). 
+Icon from Icon Finder (https://www.iconfinder.com).
+
+Screenshots:
+<br><img src="/MainScreen.png" width="480">
+<br><br><img src="/FilterOptions.png" width="480">
+<br><br><img src="/MovieDetails.png" width="480">
