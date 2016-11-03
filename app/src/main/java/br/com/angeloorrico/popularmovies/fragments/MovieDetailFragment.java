@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -25,10 +24,10 @@ public class MovieDetailFragment extends Fragment {
 
     MovieModel mMovie;
 
-    RelativeLayout mMovieDetailContainer;
-    LinearLayout mNoDataContainer;
+    LinearLayout mMovieDetailContainer, mNoDataContainer;
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
     ImageView mIvMovie;
+    View mViewSeparator;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +42,7 @@ public class MovieDetailFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_movie_detail, container, false);
 
-        mMovieDetailContainer = (RelativeLayout)rootView.findViewById(R.id.movie_detail_container);
+        mMovieDetailContainer = (LinearLayout) rootView.findViewById(R.id.movie_detail_container);
         mIvMovie = (ImageView)rootView.findViewById(R.id.iv_movie);
         mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
         mTvOverview = (TextView)rootView.findViewById(R.id.tv_overview);
@@ -51,11 +50,15 @@ public class MovieDetailFragment extends Fragment {
         mTvReleaseDate = (TextView)rootView.findViewById(R.id.tv_release_date);
         mTvVoteAverage = (TextView)rootView.findViewById(R.id.tv_vote_average);
         mTvError = (TextView)rootView.findViewById(R.id.tv_error);
+        mViewSeparator = (View)rootView.findViewById(R.id.view_separator);
 
         if (mMovie == null) {
             mTvError.setText(getString(R.string.msg_no_data));
             mNoDataContainer.setVisibility(View.VISIBLE);
             mMovieDetailContainer.setVisibility(View.GONE);
+            mTvOverview.setVisibility(View.GONE);
+            mViewSeparator.setVisibility(View.GONE);
+
         } else
             loadMovieDetails();
 

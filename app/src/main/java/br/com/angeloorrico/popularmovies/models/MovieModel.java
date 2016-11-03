@@ -18,6 +18,8 @@ public class MovieModel implements Serializable {
 
     private String poster_path;
 
+    private String backdrop_path;
+
     private String vote_average;
 
     private String overview;
@@ -65,6 +67,14 @@ public class MovieModel implements Serializable {
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+    public String getBackdropPath() {
+        return backdrop_path;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdrop_path = backdropPath;
     }
 
 }
