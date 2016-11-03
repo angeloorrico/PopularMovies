@@ -16,4 +16,5 @@ public class MoviesListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actv_movies_list);
     }
+
 }

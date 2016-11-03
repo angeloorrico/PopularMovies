@@ -26,7 +26,7 @@ public class MovieDetailFragment extends Fragment {
 
     LinearLayout mMovieDetailContainer, mNoDataContainer;
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
-    ImageView mIvMovie;
+    ImageView mIvMoviePoster;
     View mViewSeparator;
 
     @Override
@@ -43,7 +43,7 @@ public class MovieDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.frag_movie_detail, container, false);
 
         mMovieDetailContainer = (LinearLayout) rootView.findViewById(R.id.movie_detail_container);
-        mIvMovie = (ImageView)rootView.findViewById(R.id.iv_movie);
+        mIvMoviePoster = (ImageView)rootView.findViewById(R.id.iv_movie_poster);
         mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
         mTvOverview = (TextView)rootView.findViewById(R.id.tv_overview);
         mTvTitle = (TextView)rootView.findViewById(R.id.tv_title);
@@ -72,7 +72,7 @@ public class MovieDetailFragment extends Fragment {
                 .load(Utils.getImageURL(true) + mMovie.getPosterPath())
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
-                .into(mIvMovie);
+                .into(mIvMoviePoster);
 
         mTvTitle.setText(mMovie.getTitle());
         mTvReleaseDate.setText(mMovie.getReleaseDate());

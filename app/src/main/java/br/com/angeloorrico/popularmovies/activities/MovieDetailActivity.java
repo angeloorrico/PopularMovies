@@ -36,6 +36,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .getSerializableExtra(getString(R.string.movie_extra));
         Picasso.with(this)
                 .load(Utils.getImageURL(false) + movieModel.getBackdropPath())
+                .placeholder(R.drawable.generic_movie)
+                .error(R.drawable.generic_movie)
                 .into(mIvToolbar);
     }
 

@@ -10,4 +10,5 @@
     <string name="movies_list_param" translatable="false">MoviesList</string>
     <string name="movie_extra" translatable="false">MovieExtra</string>
     <string name="msg_vote_average" translatable="false">%s/10</string>
+    <string name="image_transition" translatable="false">ImageTransition</string>
 </resources>
