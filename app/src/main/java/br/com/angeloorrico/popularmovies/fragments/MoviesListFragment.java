@@ -167,7 +167,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (responseData != null) {
             mMoviesList = (MovieResponseModel) responseData;
             mMoviesAdapter.setMoviesList(mMoviesList.getResults());
-            mRvMovies.scrollToPosition(0);
+            //mRvMovies.scrollToPosition(0);
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
         } else {
