@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
+import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
  * Created by Angelo on 27/10/2016.
@@ -69,7 +69,7 @@ public class MovieDetailFragment extends Fragment {
         getActivity().setTitle(mMovie.getTitle());
 
         Picasso.with(getActivity())
-                .load(BuildConfig.POSTER_BASE_URL + mMovie.getPosterPath())
+                .load(Utils.getImageURL(true) + mMovie.getPosterPath())
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(mIvMovie);

@@ -1,7 +1,5 @@
 package br.com.angeloorrico.popularmovies.activities;
 
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
+import br.com.angeloorrico.popularmovies.utils.Utils;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -32,14 +31,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources()
                 .getColor(android.R.color.transparent));
 
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-
         mIvToolbar = (ImageView) findViewById(R.id.iv_toolbar);
         MovieModel movieModel = (MovieModel) getIntent()
                 .getSerializableExtra(getString(R.string.movie_extra));
         Picasso.with(this)
-                .load(BuildConfig.POSTER_BASE_URL + movieModel.getBackdropPath())
+                .load(Utils.getImageURL(false) + movieModel.getBackdropPath())
                 .into(mIvToolbar);
     }
 

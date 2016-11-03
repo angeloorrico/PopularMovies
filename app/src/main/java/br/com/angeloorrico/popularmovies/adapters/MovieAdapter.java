@@ -12,9 +12,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
+import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
  * Created by Angelo on 29/10/2016.
@@ -47,7 +47,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Picasso.with(mContext)
-                .load(BuildConfig.POSTER_BASE_URL + mMoviesList.get(position).getPosterPath())
+                .load(Utils.getImageURL(true) + mMoviesList.get(position).getPosterPath())
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(holder.mImgMovie);
