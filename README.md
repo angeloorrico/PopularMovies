@@ -1,1 +1,11 @@
 # PopularMovies
+
+App developed as part of the Android Nanodegree Program by Udacity.
+
+The app retrieves and shows movies information from The Movie Database - TMDB (https://www.themoviedb.org).
+
+IMPORTANT: Please obtain an API Key from TMDB and place it within "API_KEY" in the app build.gradle file.
+
+The app is localized both in Brazilian Portuguese and English.
+
+Icon from Icon Finder (https://www.iconfinder.com). 
