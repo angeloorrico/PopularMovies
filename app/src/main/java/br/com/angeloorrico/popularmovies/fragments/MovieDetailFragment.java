@@ -77,7 +77,7 @@ public class MovieDetailFragment extends Fragment {
         mTvTitle.setText(mMovie.getTitle());
         mTvReleaseDate.setText(mMovie.getReleaseDate());
         mTvOverview.setText(mMovie.getOverview());
-        mTvVoteAverage.setText(String.format(getString(R.string.msg_vote_average), mMovie.getVoteAverage()));
+        mTvVoteAverage.setText(String.format(getString(R.string.vote_average), mMovie.getVoteAverage()));
     }
 
 }
