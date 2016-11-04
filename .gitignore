@@ -1,0 +1,14 @@
+*.iml
+.idea
+gradlew
+gradlew.bat
+app/src/main/ic_launcher-web.png
+gradle/wrapper/gradle-wrapper.jar
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
