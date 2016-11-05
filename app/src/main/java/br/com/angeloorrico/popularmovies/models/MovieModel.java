@@ -1,6 +1,8 @@
 package br.com.angeloorrico.popularmovies.models;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,7 +12,9 @@ import br.com.angeloorrico.popularmovies.utils.Utils;
  * Created by Angelo on 25/10/2016.
  */
 
-public class MovieModel implements Serializable {
+public class MovieModel implements Parcelable {
+
+    public static String MOVIE_PARCELABLE_PARAM = "MovieExtra";
 
     private String title;
 
@@ -23,6 +27,15 @@ public class MovieModel implements Serializable {
     private String vote_average;
 
     private String overview;
+
+    protected MovieModel(Parcel in) {
+        title = in.readString();
+        release_date = (Date) in.readSerializable();
+        poster_path = in.readString();
+        backdrop_path = in.readString();
+        vote_average = in.readString();
+        overview = in.readString();
+    }
 
     public String getTitle() {
         return title;
@@ -75,6 +88,33 @@ public class MovieModel implements Serializable {
 
     public void setBackdropPath(String backdropPath) {
         this.backdrop_path = backdropPath;
+    }
+
+    public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
+        @Override
+        public MovieModel createFromParcel(Parcel in) {
+            return new MovieModel(in);
+        }
+
+        @Override
+        public MovieModel[] newArray(int size) {
+            return new MovieModel[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeSerializable(release_date);
+        parcel.writeString(poster_path);
+        parcel.writeString(backdrop_path);
+        parcel.writeString(vote_average);
+        parcel.writeString(overview);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 }

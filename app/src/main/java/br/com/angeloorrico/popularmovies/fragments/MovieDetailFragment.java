@@ -32,8 +32,7 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMovie = (MovieModel) getActivity().getIntent()
-                .getSerializableExtra(getString(R.string.movie_extra));
+        mMovie = getActivity().getIntent().getParcelableExtra(MovieModel.MOVIE_PARCELABLE_PARAM);
     }
 
     @Nullable
@@ -50,7 +49,7 @@ public class MovieDetailFragment extends Fragment {
         mTvReleaseDate = (TextView)rootView.findViewById(R.id.tv_release_date);
         mTvVoteAverage = (TextView)rootView.findViewById(R.id.tv_vote_average);
         mTvError = (TextView)rootView.findViewById(R.id.tv_error);
-        mViewSeparator = (View)rootView.findViewById(R.id.view_separator);
+        mViewSeparator = rootView.findViewById(R.id.view_separator);
 
         if (mMovie == null) {
             mTvError.setText(getString(R.string.msg_no_data));

@@ -18,8 +18,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MovieDetailActivity;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
@@ -57,7 +55,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(getString(R.string.movies_list_param), mMoviesList);
+        outState.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, mMoviesList);
         super.onSaveInstanceState(outState);
     }
 
@@ -67,7 +65,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (savedInstanceState == null)
             fetchMoviesList();
         else
-            onConnectionResult(savedInstanceState.get(getString(R.string.movies_list_param)));
+            onConnectionResult(savedInstanceState.get(MovieModel.MOVIE_PARCELABLE_PARAM));
     }
 
     @Override
@@ -92,7 +90,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-                        intent.putExtra(getActivity().getString(R.string.movie_extra),
+                        intent.putExtra(MovieModel.MOVIE_PARCELABLE_PARAM,
                                 mMoviesAdapter.getItem(position));
                         ActivityOptionsCompat options =
                                 ActivityOptionsCompat.makeSceneTransitionAnimation(

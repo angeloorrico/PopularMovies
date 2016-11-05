@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
@@ -32,8 +31,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .getColor(android.R.color.transparent));
 
         mIvToolbar = (ImageView) findViewById(R.id.iv_toolbar);
-        MovieModel movieModel = (MovieModel) getIntent()
-                .getSerializableExtra(getString(R.string.movie_extra));
+        MovieModel movieModel = getIntent()
+                .getParcelableExtra(MovieModel.MOVIE_PARCELABLE_PARAM);
         Picasso.with(this)
                 .load(Utils.getImageURL(false) + movieModel.getBackdropPath())
                 .placeholder(R.drawable.generic_movie)
