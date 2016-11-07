@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "br.com.angeloorrico.popularmovies"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -15,7 +15,7 @@ android {
         buildTypes.each {
             it.buildConfigField 'String', 'BASE_URL', '\"https://api.themoviedb.org/3/\"'
             it.buildConfigField 'String', 'POSTER_BASE_URL', '\"http://image.tmdb.org/t/p/\"'
-            it.buildConfigField 'String', 'API_KEY', '\"---PUT-HERE-YOUR-TMDB-KEY---\"'
+            it.buildConfigField 'String', 'API_KEY', '\"--PLACE_YOUR_TMDB_KEY_HERE\"'
         }
         release {
             minifyEnabled false
