@@ -32,7 +32,6 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMovie = getActivity().getIntent().getParcelableExtra(MovieModel.MOVIE_PARCELABLE_PARAM);
     }
 
     @Nullable
@@ -51,20 +50,22 @@ public class MovieDetailFragment extends Fragment {
         mTvError = (TextView)rootView.findViewById(R.id.tv_error);
         mViewSeparator = rootView.findViewById(R.id.view_separator);
 
+        if (getArguments() != null)
+            loadMovieDetails();
+
+        return rootView;
+    }
+
+    public void loadMovieDetails() {
+        mMovie = getArguments().getParcelable(MovieModel.MOVIE_PARCELABLE_PARAM);
         if (mMovie == null) {
             mTvError.setText(getString(R.string.msg_no_data));
             mNoDataContainer.setVisibility(View.VISIBLE);
             mMovieDetailContainer.setVisibility(View.GONE);
             mTvOverview.setVisibility(View.GONE);
             mViewSeparator.setVisibility(View.GONE);
-
-        } else
-            loadMovieDetails();
-
-        return rootView;
-    }
-
-    private void loadMovieDetails() {
+            return;
+        }
         getActivity().setTitle(mMovie.getTitle());
 
         Picasso.with(getActivity())

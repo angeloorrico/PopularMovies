@@ -1,10 +1,10 @@
 package br.com.angeloorrico.popularmovies.fragments;
 
-import android.content.Intent;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import br.com.angeloorrico.popularmovies.R;
-import br.com.angeloorrico.popularmovies.activities.MovieDetailActivity;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
 import br.com.angeloorrico.popularmovies.adapters.RecyclerItemClickListener;
 import br.com.angeloorrico.popularmovies.connection.MovieTask;
@@ -47,10 +46,20 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     RecyclerView.LayoutManager mLayoutManager;
 
+    ItemCallback mCallback;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity)
+            this.mCallback = (ItemCallback)context;
     }
 
     @Override
@@ -89,13 +98,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         mRvMovies.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-                        intent.putExtra(MovieModel.MOVIE_PARCELABLE_PARAM,
-                                mMoviesAdapter.getItem(position));
-                        ActivityOptionsCompat options =
-                                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                        getActivity(), view, getString(R.string.image_transition));
-                        startActivity(intent, options.toBundle());
+                        mCallback.onItemSelected(view, mMoviesAdapter.getItem(position));
                     }
                 })
         );
@@ -173,6 +176,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             mRvMovies.setVisibility(View.GONE);
             mNoDataContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+    public interface ItemCallback {
+        void onItemSelected(View view, MovieModel selectedMovie);
     }
 
 }

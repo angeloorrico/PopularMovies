@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import br.com.angeloorrico.popularmovies.R;
+import br.com.angeloorrico.popularmovies.fragments.MovieDetailFragment;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
@@ -31,6 +32,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .getColor(android.R.color.transparent));
 
         mIvToolbar = (ImageView) findViewById(R.id.iv_toolbar);
+
         MovieModel movieModel = getIntent()
                 .getParcelableExtra(MovieModel.MOVIE_PARCELABLE_PARAM);
         Picasso.with(this)
@@ -38,6 +40,16 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(mIvToolbar);
+
+        if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, movieModel);
+
+            MovieDetailFragment fragment = new MovieDetailFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().add(
+                    R.id.movie_detail_container, fragment).commit();
+        }
     }
 
     @Override
