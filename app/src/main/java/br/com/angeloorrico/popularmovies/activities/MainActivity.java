@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
             fragment.setArguments(bundle);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_detail_container, fragment).commit();
+                    .replace(R.id.movie_detail_container, fragment, MOVIE_DETAIL_FRAG_TAG)
+                    .commit();
         } else {
             Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.putExtra(MovieModel.MOVIE_PARCELABLE_PARAM, selectedMovie);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import br.com.angeloorrico.popularmovies.R;
+import br.com.angeloorrico.popularmovies.activities.MainActivity;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
@@ -26,7 +27,7 @@ public class MovieDetailFragment extends Fragment {
 
     LinearLayout mMovieDetailContainer, mNoDataContainer;
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
-    ImageView mIvMoviePoster;
+    ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
 
     @Override
@@ -42,6 +43,7 @@ public class MovieDetailFragment extends Fragment {
 
         mMovieDetailContainer = (LinearLayout) rootView.findViewById(R.id.movie_detail_container);
         mIvMoviePoster = (ImageView)rootView.findViewById(R.id.iv_movie_poster);
+        mIvMovieBackdrop = (ImageView)rootView.findViewById(R.id.iv_movie_backdrop);
         mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
         mTvOverview = (TextView)rootView.findViewById(R.id.tv_overview);
         mTvTitle = (TextView)rootView.findViewById(R.id.tv_title);
@@ -73,6 +75,14 @@ public class MovieDetailFragment extends Fragment {
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(mIvMoviePoster);
+        if (getContext() instanceof MainActivity) {
+            mIvMovieBackdrop.setVisibility(View.VISIBLE);
+            Picasso.with(getActivity())
+                    .load(Utils.getImageURL(false) + mMovie.getBackdropPath())
+                    .placeholder(R.drawable.generic_movie)
+                    .error(R.drawable.generic_movie)
+                    .into(mIvMovieBackdrop);
+        }
 
         mTvTitle.setText(mMovie.getTitle());
         mTvReleaseDate.setText(mMovie.getReleaseDate());
