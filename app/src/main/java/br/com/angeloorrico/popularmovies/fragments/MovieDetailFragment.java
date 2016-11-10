@@ -30,11 +30,6 @@ public class MovieDetailFragment extends Fragment {
     ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -54,6 +49,8 @@ public class MovieDetailFragment extends Fragment {
 
         if (getArguments() != null)
             loadMovieDetails();
+        else
+            showNoDataView(getString(R.string.msg_select_a_movie));
 
         return rootView;
     }
@@ -61,11 +58,7 @@ public class MovieDetailFragment extends Fragment {
     public void loadMovieDetails() {
         mMovie = getArguments().getParcelable(MovieModel.MOVIE_PARCELABLE_PARAM);
         if (mMovie == null) {
-            mTvError.setText(getString(R.string.msg_no_data));
-            mNoDataContainer.setVisibility(View.VISIBLE);
-            mMovieDetailContainer.setVisibility(View.GONE);
-            mTvOverview.setVisibility(View.GONE);
-            mViewSeparator.setVisibility(View.GONE);
+            showNoDataView(getString(R.string.msg_no_data));
             return;
         }
         getActivity().setTitle(mMovie.getTitle());
@@ -84,10 +77,19 @@ public class MovieDetailFragment extends Fragment {
                     .into(mIvMovieBackdrop);
         }
 
+        mMovieDetailContainer.setVisibility(View.VISIBLE);
         mTvTitle.setText(mMovie.getTitle());
         mTvReleaseDate.setText(mMovie.getReleaseDate());
         mTvOverview.setText(mMovie.getOverview());
         mTvVoteAverage.setText(String.format(getString(R.string.vote_average), mMovie.getVoteAverage()));
+    }
+
+    private void showNoDataView(String message) {
+        mTvError.setText(message);
+        mNoDataContainer.setVisibility(View.VISIBLE);
+        mMovieDetailContainer.setVisibility(View.GONE);
+        mTvOverview.setVisibility(View.GONE);
+        mViewSeparator.setVisibility(View.GONE);
     }
 
 }
