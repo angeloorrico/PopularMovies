@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
 
     private static final String MOVIE_DETAIL_FRAG_TAG = "MDFTAG";
 
-    boolean isTablet;
+    boolean mIsTablet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
         setContentView(R.layout.actv_movies_main);
 
         if (findViewById(R.id.movie_detail_container) != null) {
-            isTablet = true;
+            mIsTablet = true;
 
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().add(
@@ -37,12 +37,12 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
                 ).commit();
             }
         } else
-            isTablet = false;
+            mIsTablet = false;
     }
 
     @Override
     public void onItemSelected(View view, MovieModel selectedMovie) {
-        if (isTablet) {
+        if (mIsTablet) {
             MovieDetailFragment fragment = new  MovieDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, selectedMovie);
