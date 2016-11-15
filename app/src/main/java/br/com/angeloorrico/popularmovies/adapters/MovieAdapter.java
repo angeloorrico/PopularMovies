@@ -25,6 +25,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     Context mContext;
     List<MovieModel> mMoviesList;
 
+    int mSelectedPosition = -1;
+
     public MovieAdapter(Context mContext) {
         this.mContext = mContext;
         this.mMoviesList = new ArrayList<>();
@@ -51,6 +53,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 .placeholder(R.drawable.generic_movie)
                 .error(R.drawable.generic_movie)
                 .into(holder.mImgMovie);
+
+        holder.setSelected(position == mSelectedPosition);
     }
 
     @Override
@@ -62,12 +66,27 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return mMoviesList.get(position);
     }
 
+    public void setSelectedPosition(int selectedPosition) {
+        this.mSelectedPosition = selectedPosition;
+    }
+
+    public int getSelectedPosition() {
+        return mSelectedPosition;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImgMovie;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.mImgMovie = (ImageView) itemView;
+        }
+
+        public void setSelected(boolean isSelected) {
+            if (isSelected)
+                mImgMovie.setAlpha(0.5f);
+            else
+                mImgMovie.setAlpha(1.0f);
         }
     }
 

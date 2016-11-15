@@ -16,6 +16,8 @@ public class MovieModel implements Parcelable {
 
     public static String MOVIE_PARCELABLE_PARAM = "MovieExtra";
 
+    private int id;
+
     private String title;
 
     private Date release_date;
@@ -29,6 +31,7 @@ public class MovieModel implements Parcelable {
     private String overview;
 
     protected MovieModel(Parcel in) {
+        id = in.readInt();
         title = in.readString();
         release_date = (Date) in.readSerializable();
         poster_path = in.readString();
@@ -90,6 +93,14 @@ public class MovieModel implements Parcelable {
         this.backdrop_path = backdropPath;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
         @Override
         public MovieModel createFromParcel(Parcel in) {
@@ -104,6 +115,7 @@ public class MovieModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeSerializable(release_date);
         parcel.writeString(poster_path);

@@ -88,13 +88,13 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/sorry_icon"
+                android:src="@drawable/select_movie_icon"
                 android:scaleType="fitXY"/>
             <TextView
                 android:id="@+id/tv_error"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/msg_no_data"/>
+                android:text="@string/msg_select_a_movie"/>
         </LinearLayout>
     </LinearLayout>
 

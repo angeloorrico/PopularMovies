@@ -14,14 +14,20 @@ import com.squareup.picasso.Picasso;
 
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MainActivity;
+import br.com.angeloorrico.popularmovies.connection.MovieTask;
+import br.com.angeloorrico.popularmovies.connection.ReviewTask;
+import br.com.angeloorrico.popularmovies.connection.TrailerTask;
+import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
+import br.com.angeloorrico.popularmovies.models.ReviewResponseModel;
+import br.com.angeloorrico.popularmovies.models.TrailerResponseModel;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
  * Created by Angelo on 27/10/2016.
  */
 
-public class MovieDetailFragment extends Fragment {
+public class MovieDetailFragment extends Fragment implements MoviesConnector {
 
     MovieModel mMovie;
 
@@ -61,6 +67,14 @@ public class MovieDetailFragment extends Fragment {
             showNoDataView(getString(R.string.msg_no_data));
             return;
         }
+        TrailerTask trailerTask = new TrailerTask();
+        trailerTask.setConnector(this);
+        trailerTask.execute(String.valueOf(mMovie.getId()));
+
+        /*ReviewTask reviewTask = new ReviewTask();
+        reviewTask.setConnector(this);
+        reviewTask.execute(String.valueOf(mMovie.getId()));*/
+
         getActivity().setTitle(mMovie.getTitle());
 
         Picasso.with(getActivity())
@@ -90,6 +104,15 @@ public class MovieDetailFragment extends Fragment {
         mMovieDetailContainer.setVisibility(View.GONE);
         mTvOverview.setVisibility(View.GONE);
         mViewSeparator.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onConnectionResult(Object responseData) {
+        if (responseData instanceof ReviewResponseModel) {
+
+        } else if (responseData instanceof TrailerResponseModel) {
+
+        }
     }
 
 }

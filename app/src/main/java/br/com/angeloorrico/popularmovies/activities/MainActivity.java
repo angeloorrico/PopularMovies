@@ -19,16 +19,21 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
 
     private static final String MOVIE_DETAIL_FRAG_TAG = "MDFTAG";
 
+    private MoviesListFragment mListFragment;
+
     boolean mIsTablet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actv_movies_main);
+        mListFragment = (MoviesListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.movies_list_frag);
 
         if (findViewById(R.id.movie_detail_container) != null) {
             mIsTablet = true;
 
+            mListFragment.setTabletDevice(true);
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().add(
                         R.id.movie_detail_container,

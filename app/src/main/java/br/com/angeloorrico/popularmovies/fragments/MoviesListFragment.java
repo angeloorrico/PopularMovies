@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.List;
 
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
@@ -47,6 +51,8 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     RecyclerView.LayoutManager mLayoutManager;
 
     ItemCallback mCallback;
+
+    boolean mIsTablet;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +105,12 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         mCallback.onItemSelected(view, mMoviesAdapter.getItem(position));
+                        if (mIsTablet) {
+                            if (mMoviesAdapter.getSelectedPosition() > -1)
+                                mMoviesAdapter.notifyItemChanged(mMoviesAdapter.getSelectedPosition());
+                            mMoviesAdapter.setSelectedPosition(position);
+                            mMoviesAdapter.notifyItemChanged(position, null);
+                        }
                     }
                 })
         );
@@ -176,6 +188,22 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             mRvMovies.setVisibility(View.GONE);
             mNoDataContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void setTabletDevice(boolean isTablet) {
+        this.mIsTablet = isTablet;
+
+        mRvMovies.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull List<Object> payloads) {
+                return true;
+            }
+        });
     }
 
     public interface ItemCallback {
