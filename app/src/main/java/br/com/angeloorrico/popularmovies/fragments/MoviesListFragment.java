@@ -147,6 +147,9 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     }
 
     private void fetchMoviesList() {
+        if (mIsTablet)
+            mCallback.onItemSelected(null, null);
+
         if (Utils.hasInternetConnection(getActivity())) {
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);

@@ -61,8 +61,7 @@ public class ReviewTask extends AsyncTask<String, Void, ReviewResponseModel> {
     protected ReviewResponseModel doInBackground(String... params) {
         try {
             return mServicesEndpoints.fetchReviews(params[0],
-                    BuildConfig.API_KEY,
-                    Utils.getDeviceLocale()).execute().body();
+                    BuildConfig.API_KEY).execute().body();
         } catch(Exception ex) {
             Log.e(LOG_TAG, ex.getMessage());
         }

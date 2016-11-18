@@ -25,7 +25,6 @@ public interface ServicesEndpoints {
 
     @GET("movie/{id}/reviews")
     Call<ReviewResponseModel> fetchReviews(@Path("id") String movieId,
-                                           @Query("api_key") String apiKey,
-                                           @Query("language") String language);
+                                           @Query("api_key") String apiKey);
 
 }

@@ -10,8 +10,6 @@ import java.util.ArrayList;
 
 public class TrailerResponseModel {
 
-    private int id;
-
-    //private ArrayList<TrailerModel> results;
+    private ArrayList<TrailerModel> results;
 
 }

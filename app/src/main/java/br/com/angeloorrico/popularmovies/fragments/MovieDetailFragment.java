@@ -31,7 +31,7 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
 
     MovieModel mMovie;
 
-    LinearLayout mMovieDetailContainer, mNoDataContainer;
+    LinearLayout mMovieDetailContainer, mTrailersContainer, mReviewsContainer, mNoDataContainer;
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
     ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
@@ -43,6 +43,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         View rootView = inflater.inflate(R.layout.frag_movie_detail, container, false);
 
         mMovieDetailContainer = (LinearLayout) rootView.findViewById(R.id.movie_detail_container);
+        mTrailersContainer = (LinearLayout) rootView.findViewById(R.id.trailers_container);
+        mReviewsContainer = (LinearLayout) rootView.findViewById(R.id.reviews_container);
         mIvMoviePoster = (ImageView)rootView.findViewById(R.id.iv_movie_poster);
         mIvMovieBackdrop = (ImageView)rootView.findViewById(R.id.iv_movie_backdrop);
         mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
@@ -67,13 +69,13 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
             showNoDataView(getString(R.string.msg_no_data));
             return;
         }
-        TrailerTask trailerTask = new TrailerTask();
+        /*TrailerTask trailerTask = new TrailerTask();
         trailerTask.setConnector(this);
-        trailerTask.execute(String.valueOf(mMovie.getId()));
+        trailerTask.execute(String.valueOf(mMovie.getId()));*/
 
-        /*ReviewTask reviewTask = new ReviewTask();
+        ReviewTask reviewTask = new ReviewTask();
         reviewTask.setConnector(this);
-        reviewTask.execute(String.valueOf(mMovie.getId()));*/
+        reviewTask.execute(String.valueOf(mMovie.getId()));
 
         getActivity().setTitle(mMovie.getTitle());
 
@@ -92,6 +94,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         }
 
         mMovieDetailContainer.setVisibility(View.VISIBLE);
+        mTrailersContainer.setVisibility(View.VISIBLE);
+        mReviewsContainer.setVisibility(View.VISIBLE);
         mTvTitle.setText(mMovie.getTitle());
         mTvReleaseDate.setText(mMovie.getReleaseDate());
         mTvOverview.setText(mMovie.getOverview());
@@ -102,6 +106,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         mTvError.setText(message);
         mNoDataContainer.setVisibility(View.VISIBLE);
         mMovieDetailContainer.setVisibility(View.GONE);
+        mTrailersContainer.setVisibility(View.GONE);
+        mReviewsContainer.setVisibility(View.GONE);
         mTvOverview.setVisibility(View.GONE);
         mViewSeparator.setVisibility(View.GONE);
     }
