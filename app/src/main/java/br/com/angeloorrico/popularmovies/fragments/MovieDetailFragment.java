@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MainActivity;
+import br.com.angeloorrico.popularmovies.adapters.TrailerAdapter;
 import br.com.angeloorrico.popularmovies.connection.MovieTask;
 import br.com.angeloorrico.popularmovies.connection.ReviewTask;
 import br.com.angeloorrico.popularmovies.connection.TrailerTask;
@@ -31,7 +33,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
 
     MovieModel mMovie;
 
-    LinearLayout mMovieDetailContainer, mTrailersContainer, mReviewsContainer, mNoDataContainer;
+    LinearLayout mMovieDetailContainer, mNoDataContainer;
+    ListView mTrailersContainer, mReviewsContainer;
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
     ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
@@ -43,8 +46,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         View rootView = inflater.inflate(R.layout.frag_movie_detail, container, false);
 
         mMovieDetailContainer = (LinearLayout) rootView.findViewById(R.id.movie_detail_container);
-        mTrailersContainer = (LinearLayout) rootView.findViewById(R.id.trailers_container);
-        mReviewsContainer = (LinearLayout) rootView.findViewById(R.id.reviews_container);
+        mTrailersContainer = (ListView) rootView.findViewById(R.id.trailers_container);
+        mReviewsContainer = (ListView) rootView.findViewById(R.id.reviews_container);
         mIvMoviePoster = (ImageView)rootView.findViewById(R.id.iv_movie_poster);
         mIvMovieBackdrop = (ImageView)rootView.findViewById(R.id.iv_movie_backdrop);
         mNoDataContainer = (LinearLayout)rootView.findViewById(R.id.no_data_container);
@@ -69,9 +72,9 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
             showNoDataView(getString(R.string.msg_no_data));
             return;
         }
-        /*TrailerTask trailerTask = new TrailerTask();
+        TrailerTask trailerTask = new TrailerTask();
         trailerTask.setConnector(this);
-        trailerTask.execute(String.valueOf(mMovie.getId()));*/
+        trailerTask.execute(String.valueOf(mMovie.getId()));
 
         ReviewTask reviewTask = new ReviewTask();
         reviewTask.setConnector(this);
@@ -117,7 +120,9 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         if (responseData instanceof ReviewResponseModel) {
 
         } else if (responseData instanceof TrailerResponseModel) {
-
+            TrailerAdapter tAdapter = new TrailerAdapter(getContext(), -1,
+                    ((TrailerResponseModel) responseData).getResults());
+            mTrailersContainer.setAdapter(tAdapter);
         }
     }
 

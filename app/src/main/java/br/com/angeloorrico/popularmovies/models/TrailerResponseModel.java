@@ -12,4 +12,8 @@ public class TrailerResponseModel {
 
     private ArrayList<TrailerModel> results;
 
+    public ArrayList<TrailerModel> getResults() {
+        return this.results;
+    }
+
 }

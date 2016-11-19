@@ -79,21 +79,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
-        <LinearLayout
+        <ListView
             android:id="@+id/trailers_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"/>
 
-        </LinearLayout>
-
-        <LinearLayout
+        <ListView
             android:id="@+id/reviews_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:id="@+id/no_data_container"
