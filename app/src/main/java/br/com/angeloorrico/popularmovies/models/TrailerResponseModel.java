@@ -1,8 +1,6 @@
 package br.com.angeloorrico.popularmovies.models;
 
-import android.os.Parcelable;
-
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Angelo on 15/11/2016.
@@ -10,9 +8,9 @@ import java.util.ArrayList;
 
 public class TrailerResponseModel {
 
-    private ArrayList<TrailerModel> results;
+    private List<TrailerModel> results;
 
-    public ArrayList<TrailerModel> getResults() {
+    public List<TrailerModel> getResults() {
         return this.results;
     }
 
