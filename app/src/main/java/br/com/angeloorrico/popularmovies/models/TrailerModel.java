@@ -12,8 +12,6 @@ public class TrailerModel {
 
     private String name;
 
-    private String site;
-
     public String getId() {
         return id;
     }
@@ -38,11 +36,4 @@ public class TrailerModel {
         this.name = name;
     }
 
-    public String getSite() {
-        return site;
-    }
-
-    public void setSite(String site) {
-        this.site = site;
-    }
 }

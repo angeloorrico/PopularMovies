@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import br.com.angeloorrico.popularmovies.BuildConfig;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.models.TrailerModel;
 
@@ -34,7 +35,7 @@ public class MovieTrailerItem extends LinearLayout {
         TextView tvName = (TextView) findViewById(R.id.tv_name);
 
         Picasso.with(mContext)
-                .load(String.format("https://img.youtube.com/vi/%s/0.jpg", model.getKey()))
+                .load(String.format(BuildConfig.YOUTUBE_THUMB_URL, model.getKey()))
                 .into(ivThumb);
         tvName.setText(model.getName());
 
@@ -43,7 +44,7 @@ public class MovieTrailerItem extends LinearLayout {
             public void onClick(View view) {
                 Intent intent = new Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://www.youtube.com/watch?v=" + model.getKey()));
+                        Uri.parse(BuildConfig.YOUTUBE_URL + model.getKey()));
                 mContext.startActivity(intent);
             }
         });

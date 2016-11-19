@@ -15,7 +15,9 @@ android {
         buildTypes.each {
             it.buildConfigField 'String', 'BASE_URL', '\"https://api.themoviedb.org/3/\"'
             it.buildConfigField 'String', 'POSTER_BASE_URL', '\"http://image.tmdb.org/t/p/\"'
-            it.buildConfigField 'String', 'API_KEY', '\"--PLACE_YOUR_TMDB_KEY_HERE\"'
+            it.buildConfigField 'String', 'YOUTUBE_URL', '\"https://www.youtube.com/watch?v=\"'
+            it.buildConfigField 'String', 'YOUTUBE_THUMB_URL', '\"https://img.youtube.com/vi/%s/0.jpg\"'
+            it.buildConfigField 'String', 'API_KEY', '\"--PLACE_YOUR_TMDB_KEY_HERE--\"'
         }
         release {
             minifyEnabled false
