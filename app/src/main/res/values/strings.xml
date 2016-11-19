@@ -11,4 +11,6 @@
     <string name="vote_average" translatable="false">%s/10</string>
     <string name="sort_by_pref" translatable="false">SortBy</string>
     <string name="image_transition" translatable="false">ImageTransition</string>
+    <string name="label_trailers" translatable="false">Trailers</string>
+    <string name="label_reviews">Reviews</string>
 </resources>
