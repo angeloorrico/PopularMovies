@@ -7,4 +7,5 @@
     <string name="msg_vote_average">Média de avaliação:</string>
     <string name="msg_select_a_movie">Por favor, selecione um filme.</string>
     <string name="label_reviews">Análises</string>
+    <string name="label_by">por %s</string>
 </resources>

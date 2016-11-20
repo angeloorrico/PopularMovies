@@ -28,7 +28,8 @@ public class ReviewTrailerItem extends LinearLayout {
         TextView tvAuthor = (TextView) findViewById(R.id.tv_author);
 
         tvContent.setText(model.getContent());
-        tvAuthor.setText(model.getAuthor());
+        tvAuthor.setText(String.format(
+                mContext.getString(R.string.label_by), model.getAuthor()));
     }
 
 }

@@ -13,4 +13,5 @@
     <string name="image_transition" translatable="false">ImageTransition</string>
     <string name="label_trailers" translatable="false">Trailers</string>
     <string name="label_reviews">Reviews</string>
+    <string name="label_by">by %s</string>
 </resources>
