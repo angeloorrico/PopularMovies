@@ -137,12 +137,15 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public boolean onOptionsItemSelected(MenuItem item) {
         item.setChecked(item.isChecked());
 
-        if (item.getItemId() == R.id.mn_sort_by_most_popular)
+        if (item.getItemId() == R.id.mn_sort_by_most_popular) {
             saveSortByPreference(SORT_BY_MOST_POPULAR);
-        else
+            fetchMoviesList();
+        } else if (item.getItemId() == R.id.mn_sort_by_highest_rated) {
             saveSortByPreference(SORT_BY_HIGHEST_RATED);
+            fetchMoviesList();
+        } else
+            getFavoritesMovies();
 
-        fetchMoviesList();
         return true;
     }
 
@@ -165,6 +168,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             mNoDataContainer.setVisibility(View.VISIBLE);
             mSwipeContainer.setRefreshing(false);
         }
+    }
+
+    private void getFavoritesMovies() {
+
     }
 
     private void saveSortByPreference(int prefValue) {

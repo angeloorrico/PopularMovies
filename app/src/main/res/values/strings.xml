@@ -3,6 +3,7 @@
 
     <string name="mn_sort_by_most_popular">Most popular</string>
     <string name="mn_sort_by_highest_rated">Highest rated</string>
+    <string name="mn_favorites">My favorites</string>
     <string name="mn_sort_by">Sort by</string>
     <string name="msg_no_data">Sorry, no data could be found.</string>
     <string name="msg_no_internet_connection">Sorry, your device is not connected to the Internet.</string>

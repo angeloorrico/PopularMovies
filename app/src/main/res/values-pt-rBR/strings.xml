@@ -1,6 +1,7 @@
 <resources>
     <string name="mn_sort_by_most_popular">Mais populares</string>
     <string name="mn_sort_by_highest_rated">Melhor avaliados</string>
+    <string name="mn_favorites">Meus favoritos</string>
     <string name="mn_sort_by">Ordenar por</string>
     <string name="msg_no_data">Desculpe, nenhum dado encontrado.</string>
     <string name="msg_no_internet_connection">Desculpe, seu aparelho não está conectado à Internet.</string>
