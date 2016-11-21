@@ -1,7 +1,10 @@
 package br.com.angeloorrico.popularmovies.fragments;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -26,9 +29,11 @@ import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
 import br.com.angeloorrico.popularmovies.adapters.RecyclerItemClickListener;
 import br.com.angeloorrico.popularmovies.connection.MovieTask;
+import br.com.angeloorrico.popularmovies.database.MovieTable;
 import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.models.MovieResponseModel;
+import br.com.angeloorrico.popularmovies.providers.MoviesContentProvider;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
@@ -171,7 +176,15 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     }
 
     private void getFavoritesMovies() {
+        Cursor cursor = getActivity().getContentResolver()
+                .query(MoviesContentProvider.CONTENT_URI, null, null, null, null);
 
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            cursor.getString(cursor
+                    .getColumnIndexOrThrow(MovieTable.COLUMN_TITLE));
+        }
     }
 
     private void saveSortByPreference(int prefValue) {
@@ -193,6 +206,21 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             //mRvMovies.scrollToPosition(0);
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
+
+            ContentValues values = new ContentValues();
+            values.put(MovieTable.COLUMN_ID, mMoviesList.getResults().get(0).getId());
+            values.put(MovieTable.COLUMN_BACKDROP_PATH, mMoviesList.getResults().get(0).getBackdropPath());
+            values.put(MovieTable.COLUMN_OVERVIEW, mMoviesList.getResults().get(0).getOverview());
+            values.put(MovieTable.COLUMN_POSTER_PATH, mMoviesList.getResults().get(0).getPosterPath());
+            values.put(MovieTable.COLUMN_RELEASE_DATE, mMoviesList.getResults().get(0).getReleaseDate());
+            values.put(MovieTable.COLUMN_TITLE, mMoviesList.getResults().get(0).getTitle());
+            values.put(MovieTable.COLUMN_VOTE_AVERAGE, mMoviesList.getResults().get(0).getVoteAverage());
+
+            Uri uri = getActivity().getContentResolver().insert(
+                    MoviesContentProvider.CONTENT_URI, values);
+            if (uri != null) {
+
+            }
         } else {
             mTvError.setText(getString(R.string.msg_no_data));
             mRvMovies.setVisibility(View.GONE);

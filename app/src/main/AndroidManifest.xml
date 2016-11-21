@@ -20,6 +20,9 @@
         </activity>
         <activity android:name=".activities.MovieDetailActivity"
             android:theme="@style/NoActionBarActivity"/>
+
+        <provider android:name=".providers.MoviesContentProvider"
+            android:authorities="br.com.angeloorrico.popularmovies.contentprovider"/>
     </application>
 
 </manifest>
