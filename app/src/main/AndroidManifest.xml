@@ -22,7 +22,8 @@
             android:theme="@style/NoActionBarActivity"/>
 
         <provider android:name=".providers.MoviesContentProvider"
-            android:authorities="br.com.angeloorrico.popularmovies.contentprovider"/>
+            android:authorities="br.com.angeloorrico.popularmovies.contentprovider"
+            android:enabled="true"/>
     </application>
 
 </manifest>

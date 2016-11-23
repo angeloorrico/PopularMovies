@@ -15,4 +15,6 @@
     <string name="label_trailers" translatable="false">Trailers</string>
     <string name="label_reviews">Reviews</string>
     <string name="label_by">by %s</string>
+    <string name="msg_favorite_deleted">Movie removed from your favorites.</string>
+    <string name="msg_favorite_inserted">Movie inserted into your favorites..</string>
 </resources>

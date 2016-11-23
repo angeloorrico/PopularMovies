@@ -13,6 +13,9 @@ public class MovieResponseModel implements Parcelable {
 
     private ArrayList<MovieModel> results;
 
+    public MovieResponseModel() {
+    }
+
     protected MovieResponseModel(Parcel in) {
         results = in.createTypedArrayList(MovieModel.CREATOR);
     }

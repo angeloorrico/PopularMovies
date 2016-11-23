@@ -1,10 +1,8 @@
 package br.com.angeloorrico.popularmovies.fragments;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -23,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.angeloorrico.popularmovies.R;
@@ -76,12 +76,13 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, mMoviesList);
+        outState.putInt("", mMoviesAdapter.getSelectedPosition());
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null)
             fetchMoviesList();
         else
@@ -177,14 +178,43 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     private void getFavoritesMovies() {
         Cursor cursor = getActivity().getContentResolver()
-                .query(MoviesContentProvider.CONTENT_URI, null, null, null, null);
+                .query(MoviesContentProvider.CONTENT_URI_MOVIES, null, null, null, null);
 
         if (cursor != null) {
+            ArrayList<MovieModel> results = new ArrayList<>();
             cursor.moveToFirst();
+            while(!cursor.isAfterLast()) {
+                results.add(cursorToMovie(cursor));
+                cursor.moveToNext();
+            }
+            cursor.close();
 
-            cursor.getString(cursor
-                    .getColumnIndexOrThrow(MovieTable.COLUMN_TITLE));
-        }
+            MovieResponseModel responseModel = new MovieResponseModel();
+            responseModel.setResults(results);
+            onConnectionResult(responseModel);
+        } else
+            onConnectionResult(null);
+    }
+
+    private MovieModel cursorToMovie(Cursor cursor) {
+        MovieModel movie = new MovieModel();
+
+        movie.setId(cursor.getInt(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_ID)));
+        movie.setTitle(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_TITLE)));
+        movie.setBackdropPath(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_BACKDROP_PATH)));
+        movie.setPosterPath(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_POSTER_PATH)));
+        movie.setOverview(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_OVERVIEW)));
+        movie.setReleaseDate(new Date(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_RELEASE_DATE))));
+        movie.setVoteAverage(cursor.getString(cursor
+                .getColumnIndexOrThrow(MovieTable.COLUMN_VOTE_AVERAGE)));
+
+        return  movie;
     }
 
     private void saveSortByPreference(int prefValue) {
@@ -206,21 +236,6 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             //mRvMovies.scrollToPosition(0);
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
-
-            ContentValues values = new ContentValues();
-            values.put(MovieTable.COLUMN_ID, mMoviesList.getResults().get(0).getId());
-            values.put(MovieTable.COLUMN_BACKDROP_PATH, mMoviesList.getResults().get(0).getBackdropPath());
-            values.put(MovieTable.COLUMN_OVERVIEW, mMoviesList.getResults().get(0).getOverview());
-            values.put(MovieTable.COLUMN_POSTER_PATH, mMoviesList.getResults().get(0).getPosterPath());
-            values.put(MovieTable.COLUMN_RELEASE_DATE, mMoviesList.getResults().get(0).getReleaseDate());
-            values.put(MovieTable.COLUMN_TITLE, mMoviesList.getResults().get(0).getTitle());
-            values.put(MovieTable.COLUMN_VOTE_AVERAGE, mMoviesList.getResults().get(0).getVoteAverage());
-
-            Uri uri = getActivity().getContentResolver().insert(
-                    MoviesContentProvider.CONTENT_URI, values);
-            if (uri != null) {
-
-            }
         } else {
             mTvError.setText(getString(R.string.msg_no_data));
             mRvMovies.setVisibility(View.GONE);

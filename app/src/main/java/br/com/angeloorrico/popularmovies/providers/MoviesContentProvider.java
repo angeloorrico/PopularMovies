@@ -1,7 +1,6 @@
 package br.com.angeloorrico.popularmovies.providers;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -16,6 +15,8 @@ import java.util.HashSet;
 
 import br.com.angeloorrico.popularmovies.database.MovieDatabaseHelper;
 import br.com.angeloorrico.popularmovies.database.MovieTable;
+import br.com.angeloorrico.popularmovies.database.ReviewTable;
+import br.com.angeloorrico.popularmovies.database.TrailerTable;
 
 /**
  * Created by Angelo on 20/11/2016.
@@ -27,25 +28,29 @@ public class MoviesContentProvider extends ContentProvider {
 
     private static final int MOVIES   = 1;
     private static final int MOVIE_ID = 2;
+    private static final int REVIEWS  = 3;
+    private static final int TRAILERS = 4;
 
     private static final String AUTHORITY = "br.com.angeloorrico.popularmovies.contentprovider";
 
-    private static final String BASE_PATH = "movies";
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-            + "/" + BASE_PATH);
+    private static final String BASE_PATH_MOVIES   = "movies";
+    private static final String BASE_PATH_REVIEWS  = "reviews";
+    private static final String BASE_PATH_TRAILERS = "trailers";
 
-    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/movies";
-    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/movie";
+    public static final Uri CONTENT_URI_MOVIES    = Uri.parse("content://" + AUTHORITY
+            + "/" + BASE_PATH_MOVIES);
+    public static final Uri CONTENT_URI_REVIEWS   = Uri.parse("content://" + AUTHORITY
+            + "/" + BASE_PATH_REVIEWS);
+    public static final Uri CONTENT_URI_TRAILERS  = Uri.parse("content://" + AUTHORITY
+            + "/" + BASE_PATH_TRAILERS);
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH, MOVIES);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", MOVIE_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIE_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_REVIEWS, REVIEWS);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_TRAILERS, TRAILERS);
     }
-
-    //private static HashMap<String, String> MOVIES_PROJECTION_MAP;
 
     @Override
     public boolean onCreate() {
@@ -58,17 +63,20 @@ public class MoviesContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection,
                         String selection,String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
         checkColumns(projection);
-
-        queryBuilder.setTables(MovieTable.TABLE_MOVIE);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case MOVIES:
+                queryBuilder.setTables(MovieTable.TABLE_MOVIE);
                 break;
             case MOVIE_ID:
-                queryBuilder.appendWhere(MovieTable.COLUMN_ID + "="
+                queryBuilder.setTables(MovieTable.TABLE_MOVIE + " LEFT OUTER JOIN " +
+                        ReviewTable.TABLE_REVIEW + " ON (" + MovieTable.TABLE_MOVIE +
+                        "." + MovieTable.COLUMN_ID + " = " + ReviewTable.TABLE_REVIEW +
+                        "." + ReviewTable.COLUMN_MOVIE_ID + ")");
+                queryBuilder.appendWhere(MovieTable.TABLE_MOVIE
+                        + "." + MovieTable.COLUMN_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -100,11 +108,17 @@ public class MoviesContentProvider extends ContentProvider {
             case MOVIES:
                 id = sqlDB.insert(MovieTable.TABLE_MOVIE, null, contentValues);
                 break;
+            case REVIEWS:
+                id = sqlDB.insert(ReviewTable.TABLE_REVIEW, null, contentValues);
+                break;
+            case TRAILERS:
+                id = sqlDB.insert(TrailerTable.TABLE_TRAILER, null, contentValues);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
-        return Uri.parse(BASE_PATH + "/" + id);
+        return Uri.parse(BASE_PATH_MOVIES + "/" + id);
     }
 
     @Override
@@ -180,16 +194,18 @@ public class MoviesContentProvider extends ContentProvider {
         String[] available = { MovieTable.COLUMN_TITLE,
                 MovieTable.COLUMN_RELEASE_DATE, MovieTable.COLUMN_POSTER_PATH,
                 MovieTable.COLUMN_BACKDROP_PATH, MovieTable.COLUMN_VOTE_AVERAGE,
-                MovieTable.COLUMN_OVERVIEW, MovieTable.COLUMN_ID };
+                MovieTable.COLUMN_OVERVIEW, MovieTable.COLUMN_ID,
+                ReviewTable.COLUMN_CONTENT, ReviewTable.COLUMN_AUTHOR,
+                ReviewTable.COLUMN_ID, TrailerTable.COLUMN_KEY,
+                TrailerTable.COLUMN_NAME, TrailerTable.COLUMN_ID };
         if (projection != null) {
-            HashSet<String> requestedColumns = new HashSet<String>(
+            HashSet<String> requestedColumns = new HashSet<>(
                     Arrays.asList(projection));
-            HashSet<String> availableColumns = new HashSet<String>(
+            HashSet<String> availableColumns = new HashSet<>(
                     Arrays.asList(available));
-            // check if all columns which are requested are available
             if (!availableColumns.containsAll(requestedColumns)) {
                 throw new IllegalArgumentException(
-                        "Unknown columns in projection");
+                        "Unknown columns in the projection");
             }
         }
     }

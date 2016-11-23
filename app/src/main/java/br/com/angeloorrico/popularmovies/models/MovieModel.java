@@ -30,6 +30,11 @@ public class MovieModel implements Parcelable {
 
     private String overview;
 
+    private boolean isFavorite;
+
+    public MovieModel() {
+    }
+
     protected MovieModel(Parcel in) {
         id = in.readInt();
         title = in.readString();
@@ -129,4 +134,11 @@ public class MovieModel implements Parcelable {
         return 0;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
 }

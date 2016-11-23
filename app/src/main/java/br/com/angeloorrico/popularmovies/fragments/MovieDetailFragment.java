@@ -1,23 +1,31 @@
 package br.com.angeloorrico.popularmovies.fragments;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MainActivity;
 import br.com.angeloorrico.popularmovies.connection.ReviewTask;
 import br.com.angeloorrico.popularmovies.connection.TrailerTask;
+import br.com.angeloorrico.popularmovies.database.MovieTable;
+import br.com.angeloorrico.popularmovies.database.ReviewTable;
+import br.com.angeloorrico.popularmovies.database.TrailerTable;
 import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
 import br.com.angeloorrico.popularmovies.items.MovieTrailerItem;
 import br.com.angeloorrico.popularmovies.items.ReviewTrailerItem;
@@ -26,6 +34,7 @@ import br.com.angeloorrico.popularmovies.models.ReviewModel;
 import br.com.angeloorrico.popularmovies.models.ReviewResponseModel;
 import br.com.angeloorrico.popularmovies.models.TrailerModel;
 import br.com.angeloorrico.popularmovies.models.TrailerResponseModel;
+import br.com.angeloorrico.popularmovies.providers.MoviesContentProvider;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
@@ -40,6 +49,11 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
     TextView mTvError, mTvOverview, mTvTitle, mTvReleaseDate, mTvVoteAverage;
     ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
+
+    Button mBtFavoritar;
+
+    ArrayList<TrailerModel> mTrailers;
+    ArrayList<ReviewModel> mReviews;
 
     @Nullable
     @Override
@@ -60,6 +74,18 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         mTvError = (TextView)rootView.findViewById(R.id.tv_error);
         mViewSeparator = rootView.findViewById(R.id.view_separator);
 
+        mBtFavoritar = (Button)rootView.findViewById(R.id.bt_favorite);
+        mBtFavoritar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateFavorites();
+            }
+        });
+
+        if (savedInstanceState != null) {
+            mReviews = savedInstanceState.getParcelableArrayList(ReviewModel.REVIEW_PARCELABLE_PARAM);
+            mTrailers = savedInstanceState.getParcelableArrayList(TrailerModel.TRAILER_PARCELABLE_PARAM);
+        }
         if (getArguments() != null)
             loadMovieDetails();
         else
@@ -68,21 +94,30 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         return rootView;
     }
 
-    public void loadMovieDetails() {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(ReviewModel.REVIEW_PARCELABLE_PARAM, mReviews);
+        outState.putParcelableArrayList(TrailerModel.TRAILER_PARCELABLE_PARAM, mTrailers);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void loadMovieDetails() {
         mMovie = getArguments().getParcelable(MovieModel.MOVIE_PARCELABLE_PARAM);
         if (mMovie == null) {
             showNoDataView(getString(R.string.msg_no_data));
             return;
         }
-        TrailerTask trailerTask = new TrailerTask();
-        trailerTask.setConnector(this);
-        trailerTask.execute(String.valueOf(mMovie.getId()));
-
-        ReviewTask reviewTask = new ReviewTask();
-        reviewTask.setConnector(this);
-        reviewTask.execute(String.valueOf(mMovie.getId()));
-
         getActivity().setTitle(mMovie.getTitle());
+
+        Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_MOVIES + "/" + mMovie.getId());
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst())
+                mMovie.setFavorite(true);
+            cursor.close();
+        }
+        loadTrailers();
+        loadReviews();
 
         Picasso.with(getActivity())
                 .load(Utils.getImageURL(true) + mMovie.getPosterPath())
@@ -105,6 +140,41 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         mTvVoteAverage.setText(String.format(getString(R.string.vote_average), mMovie.getVoteAverage()));
     }
 
+    private void loadTrailers() {
+        if (mTrailers == null) {
+            if (mMovie.isFavorite()) {
+                Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_TRAILERS + "/" + mMovie.getId());
+                Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        TrailerModel tm = new TrailerModel();
+                        tm.setId(cursor.getString(cursor
+                                .getColumnIndexOrThrow(TrailerTable.COLUMN_ID)));
+                        tm.setKey(cursor.getString(cursor
+                                .getColumnIndexOrThrow(TrailerTable.COLUMN_KEY)));
+                        tm.setName(cursor.getString(cursor
+                                .getColumnIndexOrThrow(TrailerTable.COLUMN_NAME)));
+                    }
+                    cursor.close();
+                }
+            } else {
+                TrailerTask trailerTask = new TrailerTask();
+                trailerTask.setConnector(this);
+                trailerTask.execute(String.valueOf(mMovie.getId()));
+            }
+        } else
+            showTrailers();
+    }
+
+    private void loadReviews() {
+        if (mReviews == null) {
+            ReviewTask reviewTask = new ReviewTask();
+            reviewTask.setConnector(this);
+            reviewTask.execute(String.valueOf(mMovie.getId()));
+        } else
+            showReviews();
+    }
+
     private void showNoDataView(String message) {
         mTvError.setText(message);
         mNoDataContainer.setVisibility(View.VISIBLE);
@@ -118,27 +188,88 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
     @Override
     public void onConnectionResult(Object responseData) {
         if (responseData instanceof ReviewResponseModel) {
-            showReviews(((ReviewResponseModel) responseData).getResults());
+            mReviews = new ArrayList(((ReviewResponseModel) responseData).getResults());
+            showReviews();
         } else if (responseData instanceof TrailerResponseModel) {
-            showTrailers(((TrailerResponseModel) responseData).getResults());
+            mTrailers = new ArrayList(((TrailerResponseModel) responseData).getResults());
+            showTrailers();
         }
     }
 
-    private void showTrailers(List<TrailerModel> trailers) {
-        if (trailers != null && trailers.size() > 0) {
+    private void showTrailers() {
+        if (getContext() == null)
+            return;
+        if (mTrailers != null && mTrailers.size() > 0) {
             mTrailersContainer.setVisibility(View.VISIBLE);
-            for (TrailerModel trailer : trailers)
+            for (TrailerModel trailer : mTrailers)
                 mTrailersContainer.addView(
                         new MovieTrailerItem(getContext(), trailer));
         }
     }
 
-    private void showReviews(List<ReviewModel> reviews) {
-        if (reviews != null && reviews.size() > 0) {
+    private void showReviews() {
+        if (getContext() == null)
+            return;
+        if (mReviews != null && mReviews.size() > 0) {
             mReviewsContainer.setVisibility(View.VISIBLE);
-            for (ReviewModel review : reviews)
+            for (ReviewModel review : mReviews)
                 mReviewsContainer.addView(
                         new ReviewTrailerItem(getContext(), review));
+        }
+    }
+
+    private void updateFavorites() {
+        if (mMovie.isFavorite()) {
+            Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_MOVIES + "/" + mMovie.getId());
+            int rows = getActivity().getContentResolver().delete(uri, null, null);
+            if (rows > 0) {
+                Snackbar.make(getView(), getString(R.string.msg_favorite_deleted), Snackbar.LENGTH_LONG).show();
+                mMovie.setFavorite(false);
+            }
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(MovieTable.COLUMN_ID, mMovie.getId());
+            values.put(MovieTable.COLUMN_BACKDROP_PATH, mMovie.getBackdropPath());
+            values.put(MovieTable.COLUMN_OVERVIEW, mMovie.getOverview());
+            values.put(MovieTable.COLUMN_POSTER_PATH, mMovie.getPosterPath());
+            values.put(MovieTable.COLUMN_RELEASE_DATE, mMovie.getReleaseDate());
+            values.put(MovieTable.COLUMN_TITLE, mMovie.getTitle());
+            values.put(MovieTable.COLUMN_VOTE_AVERAGE, mMovie.getVoteAverage());
+
+            Uri uri = getActivity().getContentResolver().insert(
+                    MoviesContentProvider.CONTENT_URI_MOVIES, values);
+            if (uri != null) {
+                if (mReviews == null)
+                    return;
+                ArrayList<ContentValues> array = new ArrayList<>();
+                for (ReviewModel review : mReviews) {
+                    values = new ContentValues();
+                    values.put(ReviewTable.COLUMN_CONTENT, review.getContent());
+                    values.put(ReviewTable.COLUMN_AUTHOR, review.getAuthor());
+                    values.put(ReviewTable.COLUMN_MOVIE_ID, mMovie.getId());
+                    array.add(values);
+                }
+                getActivity().getContentResolver().bulkInsert(
+                        MoviesContentProvider.CONTENT_URI_REVIEWS,
+                        array.toArray(new ContentValues[mReviews.size()]));
+
+                if (mReviews == null)
+                    return;
+                array = new ArrayList<>();
+                for (TrailerModel trailer : mTrailers) {
+                    values = new ContentValues();
+                    values.put(TrailerTable.COLUMN_KEY, trailer.getKey());
+                    values.put(TrailerTable.COLUMN_NAME, trailer.getName());
+                    values.put(TrailerTable.COLUMN_MOVIE_ID, mMovie.getId());
+                    array.add(values);
+                }
+                getActivity().getContentResolver().bulkInsert(
+                        MoviesContentProvider.CONTENT_URI_TRAILERS,
+                        array.toArray(new ContentValues[mTrailers.size()]));
+
+                Snackbar.make(getView(), getString(R.string.msg_favorite_inserted), Snackbar.LENGTH_LONG).show();
+                mMovie.setFavorite(true);
+            }
         }
     }
 

@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
     @Override
     public void onItemSelected(View view, MovieModel selectedMovie) {
         if (mIsTablet) {
+            if (view == null)
+                return;
             MovieDetailFragment fragment = new  MovieDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, selectedMovie);

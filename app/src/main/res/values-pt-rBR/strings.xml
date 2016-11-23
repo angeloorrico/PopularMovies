@@ -9,4 +9,6 @@
     <string name="msg_select_a_movie">Por favor, selecione um filme.</string>
     <string name="label_reviews">Análises</string>
     <string name="label_by">por %s</string>
+    <string name="msg_favorite_deleted">Filme removido dos seus favoritos.</string>
+    <string name="msg_favorite_inserted">Filme inserido nos seus favoritos.</string>
 </resources>

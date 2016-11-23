@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MovieDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME     = "PopularMovies.db";
-    public static final int DATABASE_VERSION     = 1;
+    public static final String DATABASE_NAME  = "PopularMovies.db";
+    public static final int DATABASE_VERSION  = 1;
 
     public MovieDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -20,11 +20,20 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         MovieTable.onCreate(database);
+        ReviewTable.onCreate(database);
+        TrailerTable.onCreate(database);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         MovieTable.onUpgrade(database, oldVersion, newVersion);
+        ReviewTable.onUpgrade(database, oldVersion, newVersion);
+        TrailerTable.onUpgrade(database, oldVersion, newVersion);
     }
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys = ON;");
+    }
 }
