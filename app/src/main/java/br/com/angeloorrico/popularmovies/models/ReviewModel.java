@@ -17,7 +17,11 @@ public class ReviewModel implements Parcelable {
 
     private String content;
 
-    protected ReviewModel(Parcel in) {
+    public ReviewModel() {
+
+    }
+
+    public ReviewModel(Parcel in) {
         id = in.readString();
         author = in.readString();
         content = in.readString();

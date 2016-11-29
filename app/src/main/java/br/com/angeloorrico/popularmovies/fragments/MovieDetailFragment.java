@@ -142,11 +142,13 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
 
     private void loadTrailers() {
         if (mTrailers == null) {
+            mTrailers = new ArrayList<>();
             if (mMovie.isFavorite()) {
                 Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_TRAILERS + "/" + mMovie.getId());
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 if (cursor != null) {
-                    if (cursor.moveToFirst()) {
+                    cursor.moveToFirst();
+                    while(!cursor.isAfterLast()) {
                         TrailerModel tm = new TrailerModel();
                         tm.setId(cursor.getString(cursor
                                 .getColumnIndexOrThrow(TrailerTable.COLUMN_ID)));
@@ -154,6 +156,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
                                 .getColumnIndexOrThrow(TrailerTable.COLUMN_KEY)));
                         tm.setName(cursor.getString(cursor
                                 .getColumnIndexOrThrow(TrailerTable.COLUMN_NAME)));
+                        mTrailers.add(tm);
+                        cursor.moveToNext();
                     }
                     cursor.close();
                 }
@@ -162,22 +166,44 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
                 trailerTask.setConnector(this);
                 trailerTask.execute(String.valueOf(mMovie.getId()));
             }
-        } else
-            showTrailers();
+        }
+        showTrailers();
     }
 
     private void loadReviews() {
         if (mReviews == null) {
-            ReviewTask reviewTask = new ReviewTask();
-            reviewTask.setConnector(this);
-            reviewTask.execute(String.valueOf(mMovie.getId()));
-        } else
-            showReviews();
+            mReviews = new ArrayList<>();
+            if (mMovie.isFavorite()) {
+                Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_REVIEWS + "/" + mMovie.getId());
+                Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    while(!cursor.isAfterLast()) {
+                        ReviewModel rm = new ReviewModel();
+                        rm.setId(cursor.getString(cursor
+                                .getColumnIndexOrThrow(ReviewTable.COLUMN_ID)));
+                        rm.setContent(cursor.getString(cursor
+                                .getColumnIndexOrThrow(ReviewTable.COLUMN_CONTENT)));
+                        rm.setAuthor(cursor.getString(cursor
+                                .getColumnIndexOrThrow(ReviewTable.COLUMN_AUTHOR)));
+                        mReviews.add(rm);
+                        cursor.moveToNext();
+                    }
+                    cursor.close();
+                }
+            } else {
+                ReviewTask reviewTask = new ReviewTask();
+                reviewTask.setConnector(this);
+                reviewTask.execute(String.valueOf(mMovie.getId()));
+            }
+        }
+        showReviews();
     }
 
-    private void showNoDataView(String message) {
+    public void showNoDataView(String message) {
         mTvError.setText(message);
         mNoDataContainer.setVisibility(View.VISIBLE);
+        mIvMovieBackdrop.setVisibility(View.GONE);
         mMovieDetailContainer.setVisibility(View.GONE);
         mTrailersContainer.setVisibility(View.GONE);
         mReviewsContainer.setVisibility(View.GONE);
@@ -239,33 +265,32 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
             Uri uri = getActivity().getContentResolver().insert(
                     MoviesContentProvider.CONTENT_URI_MOVIES, values);
             if (uri != null) {
-                if (mReviews == null)
-                    return;
-                ArrayList<ContentValues> array = new ArrayList<>();
-                for (ReviewModel review : mReviews) {
-                    values = new ContentValues();
-                    values.put(ReviewTable.COLUMN_CONTENT, review.getContent());
-                    values.put(ReviewTable.COLUMN_AUTHOR, review.getAuthor());
-                    values.put(ReviewTable.COLUMN_MOVIE_ID, mMovie.getId());
-                    array.add(values);
+                if (mReviews != null) {
+                    ArrayList<ContentValues> array = new ArrayList<>();
+                    for (ReviewModel review : mReviews) {
+                        values = new ContentValues();
+                        values.put(ReviewTable.COLUMN_CONTENT, review.getContent());
+                        values.put(ReviewTable.COLUMN_AUTHOR, review.getAuthor());
+                        values.put(ReviewTable.COLUMN_MOVIE_ID, mMovie.getId());
+                        array.add(values);
+                    }
+                    getActivity().getContentResolver().bulkInsert(
+                            MoviesContentProvider.CONTENT_URI_REVIEWS,
+                            array.toArray(new ContentValues[mReviews.size()]));
                 }
-                getActivity().getContentResolver().bulkInsert(
-                        MoviesContentProvider.CONTENT_URI_REVIEWS,
-                        array.toArray(new ContentValues[mReviews.size()]));
-
-                if (mReviews == null)
-                    return;
-                array = new ArrayList<>();
-                for (TrailerModel trailer : mTrailers) {
-                    values = new ContentValues();
-                    values.put(TrailerTable.COLUMN_KEY, trailer.getKey());
-                    values.put(TrailerTable.COLUMN_NAME, trailer.getName());
-                    values.put(TrailerTable.COLUMN_MOVIE_ID, mMovie.getId());
-                    array.add(values);
+                if (mTrailers != null) {
+                    ArrayList<ContentValues> array = new ArrayList<>();
+                    for (TrailerModel trailer : mTrailers) {
+                        values = new ContentValues();
+                        values.put(TrailerTable.COLUMN_KEY, trailer.getKey());
+                        values.put(TrailerTable.COLUMN_NAME, trailer.getName());
+                        values.put(TrailerTable.COLUMN_MOVIE_ID, mMovie.getId());
+                        array.add(values);
+                    }
+                    getActivity().getContentResolver().bulkInsert(
+                            MoviesContentProvider.CONTENT_URI_TRAILERS,
+                            array.toArray(new ContentValues[mTrailers.size()]));
                 }
-                getActivity().getContentResolver().bulkInsert(
-                        MoviesContentProvider.CONTENT_URI_TRAILERS,
-                        array.toArray(new ContentValues[mTrailers.size()]));
 
                 Snackbar.make(getView(), getString(R.string.msg_favorite_inserted), Snackbar.LENGTH_LONG).show();
                 mMovie.setFavorite(true);

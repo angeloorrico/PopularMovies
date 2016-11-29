@@ -26,10 +26,12 @@ public class MoviesContentProvider extends ContentProvider {
 
     private MovieDatabaseHelper databaseHelper;
 
-    private static final int MOVIES   = 1;
-    private static final int MOVIE_ID = 2;
-    private static final int REVIEWS  = 3;
-    private static final int TRAILERS = 4;
+    private static final int MOVIES      = 1;
+    private static final int MOVIE_ID    = 2;
+    private static final int REVIEWS     = 3;
+    private static final int REVIEWS_ID  = 4;
+    private static final int TRAILERS    = 5;
+    private static final int TRAILERS_ID = 6;
 
     private static final String AUTHORITY = "br.com.angeloorrico.popularmovies.contentprovider";
 
@@ -49,7 +51,9 @@ public class MoviesContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIE_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH_REVIEWS, REVIEWS);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_REVIEWS + "/#", REVIEWS_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH_TRAILERS, TRAILERS);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_TRAILERS + "/#", TRAILERS_ID);
     }
 
     @Override
@@ -77,6 +81,18 @@ public class MoviesContentProvider extends ContentProvider {
                         "." + ReviewTable.COLUMN_MOVIE_ID + ")");
                 queryBuilder.appendWhere(MovieTable.TABLE_MOVIE
                         + "." + MovieTable.COLUMN_ID + "="
+                        + uri.getLastPathSegment());
+                break;
+            case TRAILERS_ID:
+                queryBuilder.setTables(TrailerTable.TABLE_TRAILER);
+                queryBuilder.appendWhere(TrailerTable.TABLE_TRAILER
+                        + "." + TrailerTable.COLUMN_MOVIE_ID + "="
+                        + uri.getLastPathSegment());
+                break;
+            case REVIEWS_ID:
+                queryBuilder.setTables(ReviewTable.TABLE_REVIEW);
+                queryBuilder.appendWhere(ReviewTable.TABLE_REVIEW
+                        + "." + ReviewTable.COLUMN_MOVIE_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:

@@ -22,7 +22,8 @@ public class ReviewTable {
             + COLUMN_AUTHOR + " text not null, "
             + COLUMN_MOVIE_ID + " integer, "
             + "foreign key (" + COLUMN_MOVIE_ID + ") references "
-            + MovieTable.TABLE_MOVIE + "(" + MovieTable.COLUMN_ID + ")"
+            + MovieTable.TABLE_MOVIE + "(" + MovieTable.COLUMN_ID + ") "
+            + "on delete cascade"
             + ");";
 
     public static void onCreate(SQLiteDatabase database) {

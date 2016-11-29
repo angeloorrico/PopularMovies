@@ -69,4 +69,12 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
         }
     }
 
+    @Override
+    public void onNewOptionSelected() {
+        ((MovieDetailFragment)getSupportFragmentManager()
+                .findFragmentByTag(MOVIE_DETAIL_FRAG_TAG))
+                .showNoDataView(getString(R.string.msg_select_a_movie));
+        mListFragment.clearSelectedPosition();
+    }
+
 }

@@ -148,6 +148,8 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public boolean onOptionsItemSelected(MenuItem item) {
         item.setChecked(item.isChecked());
 
+        if (mIsTablet)
+            mCallback.onNewOptionSelected();
         if (item.getItemId() == R.id.mn_sort_by_most_popular) {
             saveSortByPreference(SORT_BY_MOST_POPULAR);
             fetchMoviesList();
@@ -193,6 +195,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
                 cursor.moveToNext();
             }
             cursor.close();
+            if (results.size() == 0) {
+                onConnectionResult(null);
+                return;
+            }
 
             MovieResponseModel responseModel = new MovieResponseModel();
             responseModel.setResults(results);
@@ -267,8 +273,16 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         });
     }
 
+    public void clearSelectedPosition() {
+        selectedPosition = -1;
+        mMoviesAdapter.setSelectedPosition(selectedPosition);
+        mMoviesAdapter.notifyItemChanged(selectedPosition, null);
+    }
+
     public interface ItemCallback {
         void onItemSelected(View view, MovieModel selectedMovie);
+
+        void onNewOptionSelected();
     }
 
 }
