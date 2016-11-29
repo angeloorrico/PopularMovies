@@ -36,6 +36,7 @@ public class MovieTrailerItem extends LinearLayout {
 
         Picasso.with(mContext)
                 .load(String.format(BuildConfig.YOUTUBE_THUMB_URL, model.getKey()))
+                .placeholder(R.drawable.generic_movie)
                 .into(ivThumb);
         tvName.setText(model.getName());
 
