@@ -14,7 +14,8 @@ import br.com.angeloorrico.popularmovies.utils.Utils;
 
 public class MovieModel implements Parcelable {
 
-    public static String MOVIE_PARCELABLE_PARAM = "MovieExtra";
+    public static String MOVIE_PARCELABLE_PARAM          = "MovieExtra";
+    public static String SELECTED_MOVIE_PARCELABLE_PARAM = "IndexExtra";
 
     private int id;
 

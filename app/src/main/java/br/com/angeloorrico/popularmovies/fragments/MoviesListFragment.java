@@ -59,6 +59,8 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     boolean mIsTablet;
 
+    int selectedPosition = -1;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,8 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(MovieModel.MOVIE_PARCELABLE_PARAM, mMoviesList);
-        outState.putInt("", mMoviesAdapter.getSelectedPosition());
+        outState.putInt(MovieModel.SELECTED_MOVIE_PARCELABLE_PARAM,
+                mMoviesAdapter.getSelectedPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -85,8 +88,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null)
             fetchMoviesList();
-        else
+        else {
+            selectedPosition = savedInstanceState.getInt(MovieModel.SELECTED_MOVIE_PARCELABLE_PARAM);
             onConnectionResult(savedInstanceState.get(MovieModel.MOVIE_PARCELABLE_PARAM));
+        }
     }
 
     @Override
@@ -233,7 +238,10 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (responseData != null) {
             mMoviesList = (MovieResponseModel) responseData;
             mMoviesAdapter.setMoviesList(mMoviesList.getResults());
-            //mRvMovies.scrollToPosition(0);
+            if (selectedPosition > -1) {
+                mMoviesAdapter.setSelectedPosition(selectedPosition);
+                mRvMovies.smoothScrollToPosition(selectedPosition);
+            }
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
         } else {
