@@ -1,7 +1,9 @@
 package br.com.angeloorrico.popularmovies.fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
     ImageView mIvMoviePoster, mIvMovieBackdrop;
     View mViewSeparator;
 
-    Button mBtFavoritar;
+    ImageView mIvFavorite;
 
     ArrayList<TrailerModel> mTrailers;
     ArrayList<ReviewModel> mReviews;
@@ -74,10 +75,12 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         mTvError = (TextView)rootView.findViewById(R.id.tv_error);
         mViewSeparator = rootView.findViewById(R.id.view_separator);
 
-        mBtFavoritar = (Button)rootView.findViewById(R.id.bt_favorite);
-        mBtFavoritar.setOnClickListener(new View.OnClickListener() {
+        mIvFavorite = (ImageView)rootView.findViewById(R.id.iv_favorite);
+        mIvFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ObjectAnimator.ofFloat(view, "scaleX", 1.2f, 1.0f).setDuration(500).start();
+                ObjectAnimator.ofFloat(view, "scaleY", 1.2f, 1.0f).setDuration(500).start();
                 updateFavorites();
             }
         });
@@ -245,7 +248,9 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
     }
 
     private void updateFavorites() {
+        TransitionDrawable transition = (TransitionDrawable) mIvFavorite.getBackground();
         if (mMovie.isFavorite()) {
+            transition.reverseTransition(400);
             Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_MOVIES + "/" + mMovie.getId());
             int rows = getActivity().getContentResolver().delete(uri, null, null);
             if (rows > 0) {
@@ -253,6 +258,7 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
                 mMovie.setFavorite(false);
             }
         } else {
+            transition.startTransition(400);
             ContentValues values = new ContentValues();
             values.put(MovieTable.COLUMN_ID, mMovie.getId());
             values.put(MovieTable.COLUMN_BACKDROP_PATH, mMovie.getBackdropPath());
