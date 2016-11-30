@@ -2,8 +2,11 @@ package br.com.angeloorrico.popularmovies.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,14 +60,17 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
 
     ItemCallback mCallback;
 
-    boolean mIsTablet;
+    MovieContentObserver mMovieContentObserver;
 
-    int selectedPosition = -1;
+    boolean mIsTablet, mIsFavorite;
+
+    int mSelectedPosition = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mMovieContentObserver = new MovieContentObserver(new Handler());
     }
 
     @Override
@@ -89,7 +95,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (savedInstanceState == null)
             fetchMoviesList();
         else {
-            selectedPosition = savedInstanceState.getInt(MovieModel.SELECTED_MOVIE_PARCELABLE_PARAM);
+            mSelectedPosition = savedInstanceState.getInt(MovieModel.SELECTED_MOVIE_PARCELABLE_PARAM);
             onConnectionResult(savedInstanceState.get(MovieModel.MOVIE_PARCELABLE_PARAM));
         }
     }
@@ -151,13 +157,17 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (mIsTablet)
             mCallback.onNewOptionSelected();
         if (item.getItemId() == R.id.mn_sort_by_most_popular) {
+            mIsFavorite = false;
             saveSortByPreference(SORT_BY_MOST_POPULAR);
             fetchMoviesList();
         } else if (item.getItemId() == R.id.mn_sort_by_highest_rated) {
+            mIsFavorite = false;
             saveSortByPreference(SORT_BY_HIGHEST_RATED);
             fetchMoviesList();
-        } else
+        } else {
+            mIsFavorite = true;
             getFavoritesMovies();
+        }
 
         return true;
     }
@@ -244,9 +254,9 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         if (responseData != null) {
             mMoviesList = (MovieResponseModel) responseData;
             mMoviesAdapter.setMoviesList(mMoviesList.getResults());
-            if (selectedPosition > -1) {
-                mMoviesAdapter.setSelectedPosition(selectedPosition);
-                mRvMovies.smoothScrollToPosition(selectedPosition);
+            if (mSelectedPosition > -1) {
+                mMoviesAdapter.setSelectedPosition(mSelectedPosition);
+                mRvMovies.smoothScrollToPosition(mSelectedPosition);
             }
             mRvMovies.setVisibility(View.VISIBLE);
             mNoDataContainer.setVisibility(View.GONE);
@@ -260,29 +270,81 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
     public void setTabletDevice(boolean isTablet) {
         this.mIsTablet = isTablet;
 
-        mRvMovies.setItemAnimator(new DefaultItemAnimator() {
-            @Override
-            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return true;
-            }
+        if (isTablet) {
+            mRvMovies.setItemAnimator(new DefaultItemAnimator() {
+                @Override
+                public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
+                    return true;
+                }
 
-            @Override
-            public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull List<Object> payloads) {
-                return true;
-            }
-        });
+                @Override
+                public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull List<Object> payloads) {
+                    return true;
+                }
+            });
+        }
     }
 
     public void clearSelectedPosition() {
-        selectedPosition = -1;
-        mMoviesAdapter.setSelectedPosition(selectedPosition);
-        mMoviesAdapter.notifyItemChanged(selectedPosition, null);
+        mSelectedPosition = -1;
+        mMoviesAdapter.setSelectedPosition(mSelectedPosition);
+        mMoviesAdapter.notifyItemChanged(mSelectedPosition, null);
     }
 
     public interface ItemCallback {
         void onItemSelected(View view, MovieModel selectedMovie);
-
         void onNewOptionSelected();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getContentResolver().registerContentObserver(
+                MoviesContentProvider.CONTENT_URI_MOVIES,
+                true,
+                mMovieContentObserver);
+        if (!mIsTablet && mIsFavorite)
+            getFavoritesMovies();
+    }
+
+    @Override
+    public void onDestroy() {
+        getActivity().getContentResolver().unregisterContentObserver(mMovieContentObserver);
+        super.onDestroy();
+    }
+
+    /*@Override
+    public void onPause() {
+        getActivity().getContentResolver().unregisterContentObserver(mMovieContentObserver);
+        super.onPause();
+    }*/
+
+    class MovieContentObserver extends ContentObserver {
+
+        public MovieContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (mIsFavorite) {
+                if (mIsTablet) {
+                    getFavoritesMovies();
+                    //if (mIsTablet)
+                        clearSelectedPosition();
+                }
+            }
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            return true;
+        }
     }
 
 }

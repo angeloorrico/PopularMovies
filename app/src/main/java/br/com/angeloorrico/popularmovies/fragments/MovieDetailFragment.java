@@ -115,8 +115,10 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         Uri uri = Uri.parse(MoviesContentProvider.CONTENT_URI_MOVIES + "/" + mMovie.getId());
         Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {
-            if (cursor.moveToFirst())
+            if (cursor.moveToFirst()) {
                 mMovie.setFavorite(true);
+                mIvFavorite.setSelected(true);
+            }
             cursor.close();
         }
         loadTrailers();
