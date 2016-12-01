@@ -2,6 +2,8 @@ package br.com.angeloorrico.popularmovies.fragments;
 
 import android.animation.ObjectAnimator;
 import android.content.ContentValues;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +25,6 @@ import java.util.ArrayList;
 
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.activities.MainActivity;
-import br.com.angeloorrico.popularmovies.connection.ReviewTask;
-import br.com.angeloorrico.popularmovies.connection.TrailerTask;
 import br.com.angeloorrico.popularmovies.database.MovieTable;
 import br.com.angeloorrico.popularmovies.database.ReviewTable;
 import br.com.angeloorrico.popularmovies.database.TrailerTable;
@@ -36,6 +37,8 @@ import br.com.angeloorrico.popularmovies.models.ReviewResponseModel;
 import br.com.angeloorrico.popularmovies.models.TrailerModel;
 import br.com.angeloorrico.popularmovies.models.TrailerResponseModel;
 import br.com.angeloorrico.popularmovies.providers.MoviesContentProvider;
+import br.com.angeloorrico.popularmovies.receivers.MovieReceiver;
+import br.com.angeloorrico.popularmovies.services.MovieService;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
@@ -146,6 +149,12 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
     }
 
     private void loadTrailers() {
+        IntentFilter intentFilter = new IntentFilter(MovieService.BROADCAST_TRAILERS_ACTION);
+        MovieReceiver movieReceiver = new MovieReceiver();
+        movieReceiver.setConnector(this);
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(movieReceiver, intentFilter);
+
         if (mTrailers == null) {
             mTrailers = new ArrayList<>();
             if (mMovie.isFavorite()) {
@@ -167,15 +176,22 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
                     cursor.close();
                 }
             } else {
-                TrailerTask trailerTask = new TrailerTask();
-                trailerTask.setConnector(this);
-                trailerTask.execute(String.valueOf(mMovie.getId()));
+                Intent intent = new Intent(getActivity(), MovieService.class);
+                intent.putExtra(MovieService.PARAM_SELECTED_FILTER, MovieService.PARAM_TRAILERS);
+                intent.putExtra(MovieService.PARAM_MOVIE_ID, String.valueOf(mMovie.getId()));
+                getActivity().startService(intent);
             }
         }
         showTrailers();
     }
 
     private void loadReviews() {
+        IntentFilter intentFilter = new IntentFilter(MovieService.BROADCAST_REVIEWS_ACTION);
+        MovieReceiver movieReceiver = new MovieReceiver();
+        movieReceiver.setConnector(this);
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(movieReceiver, intentFilter);
+
         if (mReviews == null) {
             mReviews = new ArrayList<>();
             if (mMovie.isFavorite()) {
@@ -197,9 +213,10 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
                     cursor.close();
                 }
             } else {
-                ReviewTask reviewTask = new ReviewTask();
-                reviewTask.setConnector(this);
-                reviewTask.execute(String.valueOf(mMovie.getId()));
+                Intent intent = new Intent(getActivity(), MovieService.class);
+                intent.putExtra(MovieService.PARAM_SELECTED_FILTER, MovieService.PARAM_REVIEWS);
+                intent.putExtra(MovieService.PARAM_MOVIE_ID, String.valueOf(mMovie.getId()));
+                getActivity().startService(intent);
             }
         }
         showReviews();

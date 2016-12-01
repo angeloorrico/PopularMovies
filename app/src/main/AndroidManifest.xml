@@ -24,6 +24,10 @@
         <provider android:name=".providers.MoviesContentProvider"
             android:authorities="br.com.angeloorrico.popularmovies.contentprovider"
             android:enabled="true"/>
+
+        <service android:name=".services.MovieService"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>

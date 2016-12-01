@@ -2,6 +2,8 @@ package br.com.angeloorrico.popularmovies.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,12 +34,13 @@ import java.util.List;
 import br.com.angeloorrico.popularmovies.R;
 import br.com.angeloorrico.popularmovies.adapters.MovieAdapter;
 import br.com.angeloorrico.popularmovies.adapters.RecyclerItemClickListener;
-import br.com.angeloorrico.popularmovies.connection.MovieTask;
 import br.com.angeloorrico.popularmovies.database.MovieTable;
 import br.com.angeloorrico.popularmovies.interfaces.MoviesConnector;
 import br.com.angeloorrico.popularmovies.models.MovieModel;
 import br.com.angeloorrico.popularmovies.models.MovieResponseModel;
 import br.com.angeloorrico.popularmovies.providers.MoviesContentProvider;
+import br.com.angeloorrico.popularmovies.receivers.MovieReceiver;
+import br.com.angeloorrico.popularmovies.services.MovieService;
 import br.com.angeloorrico.popularmovies.utils.Utils;
 
 /**
@@ -71,6 +75,12 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mMovieContentObserver = new MovieContentObserver(new Handler());
+
+        IntentFilter intentFilter = new IntentFilter(MovieService.BROADCAST_MOVIES_ACTION);
+        MovieReceiver movieReceiver = new MovieReceiver();
+        movieReceiver.setConnector(this);
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(movieReceiver, intentFilter);
     }
 
     @Override
@@ -181,10 +191,15 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             mNoDataContainer.setVisibility(View.GONE);
             mSwipeContainer.setRefreshing(true);
 
-            MovieTask movieTask = new MovieTask();
+            /*MovieTask movieTask = new MovieTask();
             movieTask.setConnector(this);
             movieTask.execute(getSortByPreference() == SORT_BY_MOST_POPULAR ?
-                    MovieTask.PARAM_MOST_POPULAR : MovieTask.PARAM_TOP_RATED);
+                    MovieTask.PARAM_MOST_POPULAR : MovieTask.PARAM_TOP_RATED);*/
+            Intent intent = new Intent(getActivity(), MovieService.class);
+            intent.putExtra(MovieService.PARAM_SELECTED_FILTER,
+                    getSortByPreference() == SORT_BY_MOST_POPULAR ?
+                    MovieService.PARAM_MOST_POPULAR : MovieService.PARAM_TOP_RATED);
+            getActivity().startService(intent);
         } else {
             mTvError.setText(getString(R.string.msg_no_internet_connection));
             mRvMovies.setVisibility(View.GONE);
@@ -313,12 +328,6 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
         super.onDestroy();
     }
 
-    /*@Override
-    public void onPause() {
-        getActivity().getContentResolver().unregisterContentObserver(mMovieContentObserver);
-        super.onPause();
-    }*/
-
     class MovieContentObserver extends ContentObserver {
 
         public MovieContentObserver(Handler handler) {
@@ -335,8 +344,7 @@ public class MoviesListFragment extends Fragment implements MoviesConnector {
             if (mIsFavorite) {
                 if (mIsTablet) {
                     getFavoritesMovies();
-                    //if (mIsTablet)
-                        clearSelectedPosition();
+                    clearSelectedPosition();
                 }
             }
         }
