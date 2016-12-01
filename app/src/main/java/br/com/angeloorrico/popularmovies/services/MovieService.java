@@ -80,25 +80,27 @@ public class MovieService extends IntentService {
             mServicesEndpoints = retrofit.create(ServicesEndpoints.class);
 
             Parcelable responseModel;
+            Intent resultIntent;
             if (intent.getStringExtra(PARAM_SELECTED_FILTER).equals(PARAM_MOST_POPULAR) ||
                     intent.getStringExtra(PARAM_SELECTED_FILTER).equals(PARAM_TOP_RATED)) {
                 responseModel =
                         mServicesEndpoints.fetchMoviesList(intent.getStringExtra(PARAM_SELECTED_FILTER),
                                 Utils.getDeviceLocale()).execute().body();
+                resultIntent = new Intent(BROADCAST_MOVIES_ACTION);
             } else if (intent.getStringExtra(PARAM_SELECTED_FILTER).equals(PARAM_TRAILERS)) {
                 responseModel = mServicesEndpoints.fetchTrailers(
                         intent.getStringExtra(PARAM_MOVIE_ID),
                         BuildConfig.API_KEY,
                         Utils.getDeviceLocale()).execute().body();
+                resultIntent = new Intent(BROADCAST_TRAILERS_ACTION);
             } else {
                 responseModel = mServicesEndpoints.fetchReviews(
                         intent.getStringExtra(PARAM_MOVIE_ID),
                         BuildConfig.API_KEY).execute().body();
+                resultIntent = new Intent(BROADCAST_REVIEWS_ACTION);
             }
 
-            Intent resultIntent = new Intent(BROADCAST_MOVIES_ACTION);
             resultIntent.putExtra(PARAM_BROADCAST_RESULT, responseModel);
-
             LocalBroadcastManager.getInstance(this).sendBroadcast(resultIntent);
         } catch(Exception ex) {
             Log.e(LOG_TAG, ex.getMessage());
