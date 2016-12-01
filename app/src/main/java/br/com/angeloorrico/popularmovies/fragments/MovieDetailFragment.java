@@ -120,7 +120,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 mMovie.setFavorite(true);
-                mIvFavorite.setSelected(true);
+                mIvFavorite.setBackground(getResources()
+                        .getDrawable(R.drawable.remove_favorite_transition));
             }
             cursor.close();
         }
@@ -275,6 +276,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
             if (rows > 0) {
                 Snackbar.make(getView(), getString(R.string.msg_favorite_deleted), Snackbar.LENGTH_LONG).show();
                 mMovie.setFavorite(false);
+                mIvFavorite.setBackground(getResources()
+                        .getDrawable(R.drawable.favorite_transition));
             }
         } else {
             transition.startTransition(400);
@@ -319,6 +322,8 @@ public class MovieDetailFragment extends Fragment implements MoviesConnector {
 
                 Snackbar.make(getView(), getString(R.string.msg_favorite_inserted), Snackbar.LENGTH_LONG).show();
                 mMovie.setFavorite(true);
+                mIvFavorite.setBackground(getResources()
+                        .getDrawable(R.drawable.remove_favorite_transition));
             }
         }
     }
