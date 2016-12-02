@@ -14,5 +14,5 @@ Screenshots:
 <br><img src="/MainScreen.png" width="480">
 <br><br><img src="/FilterOptions.png" width="480">
 <br><br><img src="/MovieDetails.png" width="480">
-<br><br><img src="/Tablet1.png" width="480">
-<br><br><img src="/Tablet2.png" width="480">
+<br><br><img src="/Tablet1.png" width="640">
+<br><br><img src="/Tablet2.png" width="640">
